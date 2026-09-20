@@ -42,11 +42,22 @@ export const request = async <T>({
         return;
       }
 
-      const { message } = await response.json();
+      let message = `Request failed with status ${response.status}`;
+      try {
+        const errorBody = await response.json();
+        message = errorBody.message ?? message;
+      } catch {
+        // response body is empty or not JSON
+      }
       throw new Error(message);
     }
 
-    const data: T = await response.json();
+    let data: T;
+    try {
+      data = await response.json();
+    } catch {
+      throw new Error("Server returned an empty or invalid response.");
+    }
     onSuccess(data);
   } catch (error) {
     if (error instanceof Error) {

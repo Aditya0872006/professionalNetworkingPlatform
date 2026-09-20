@@ -14,6 +14,8 @@ import classes from "./Notifications.module.scss";
 enum NotificationType {
   LIKE = "LIKE",
   COMMENT = "COMMENT",
+  GROUP_JOIN_REQUEST = "GROUP_JOIN_REQUEST",
+  GROUP_JOIN_ACCEPTED = "GROUP_JOIN_ACCEPTED",
 }
 export interface INotification {
   id: number;
@@ -98,7 +100,14 @@ function Notification({
     <button
       onClick={() => {
         markNotificationAsRead(notification.id);
-        navigate(`/posts/${notification.resourceId}`);
+        if (
+          notification.type === NotificationType.GROUP_JOIN_REQUEST ||
+          notification.type === NotificationType.GROUP_JOIN_ACCEPTED
+        ) {
+          navigate(`/groups/${notification.resourceId}`);
+        } else {
+          navigate(`/posts/${notification.resourceId}`);
+        }
       }}
       className={
         notification.read ? classes.notification : `${classes.notification} ${classes.unread}`
@@ -116,7 +125,15 @@ function Notification({
         }}
       >
         <strong>{notification.actor.firstName + " " + notification.actor.lastName}</strong>{" "}
-        {notification.type === NotificationType.LIKE ? "liked" : "commented on"} your post.
+        {notification.type === NotificationType.LIKE
+          ? "liked your post."
+          : notification.type === NotificationType.COMMENT
+          ? "commented on your post."
+          : notification.type === NotificationType.GROUP_JOIN_REQUEST
+          ? "requested to join your group."
+          : notification.type === NotificationType.GROUP_JOIN_ACCEPTED
+          ? "accepted your request to join the group."
+          : "sent a notification."}
       </p>
       <TimeAgo date={notification.creationDate} />
     </button>

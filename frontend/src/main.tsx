@@ -12,6 +12,9 @@ import { VerifyEmail } from "./features/authentication/pages/VerifyEmail/VerifyE
 import { Feed } from "./features/feed/pages/Feed/Feed";
 import { Notifications } from "./features/feed/pages/Notifications/Notifications";
 import { PostPage } from "./features/feed/pages/Post/Post";
+import { CreateGroup } from "./features/groups/pages/CreateGroup/CreateGroup";
+import { GroupDetail } from "./features/groups/pages/GroupDetail/GroupDetail";
+import { Groups } from "./features/groups/pages/Groups/Groups";
 import { Conversation } from "./features/messaging/pages/Conversation/Conversation";
 import { Messaging } from "./features/messaging/pages/Messages/Messaging";
 import { Connections } from "./features/networking/pages/Connections/Connections";
@@ -76,6 +79,18 @@ const router = createBrowserRouter([
           {
             path: "profile/:id/posts",
             element: <Posts />,
+          },
+          {
+            path: "groups",
+            element: <Groups />,
+          },
+          {
+            path: "groups/create",
+            element: <CreateGroup />,
+          },
+          {
+            path: "groups/:id",
+            element: <GroupDetail />,
           },
         ],
       },

@@ -132,5 +132,42 @@ public class NotificationService {
         messagingTemplate.convertAndSend("/topic/users/" + id + "/connections/seen", connection);
     }
 
+    // ─── Group Notifications ────────────────────────────────────────────────────
+
+    public void sendGroupJoinRequestNotification(User actor, User admin, Long groupId) {
+        Notification notification = new Notification(actor, admin, NotificationType.GROUP_JOIN_REQUEST, groupId);
+        notificationRepository.save(notification);
+        messagingTemplate.convertAndSend("/topic/users/" + admin.getId() + "/notifications", notification);
+    }
+
+    public void sendGroupJoinAcceptedNotification(User admin, User member, Long groupId) {
+        Notification notification = new Notification(admin, member, NotificationType.GROUP_JOIN_ACCEPTED, groupId);
+        notificationRepository.save(notification);
+        messagingTemplate.convertAndSend("/topic/users/" + member.getId() + "/notifications", notification);
+    }
+
+    public void sendNewGroupPostNotification(Long groupId, Object post) {
+        messagingTemplate.convertAndSend("/topic/groups/" + groupId + "/posts", post);
+    }
+
+    public void sendEditGroupPostNotification(Long groupId, Long postId, Object post) {
+        messagingTemplate.convertAndSend("/topic/groups/" + groupId + "/posts/" + postId + "/edit", post);
+    }
+
+    public void sendDeleteGroupPostNotification(Long groupId, Long postId) {
+        messagingTemplate.convertAndSend("/topic/groups/" + groupId + "/posts/" + postId + "/delete", postId);
+    }
+
+    public void sendGroupPostLikes(Long groupId, Long postId, Object likes) {
+        messagingTemplate.convertAndSend("/topic/groups/" + groupId + "/posts/" + postId + "/likes", likes);
+    }
+
+    public void sendGroupPostComment(Long groupId, Long postId, Object comment) {
+        messagingTemplate.convertAndSend("/topic/groups/" + groupId + "/posts/" + postId + "/comments", comment);
+    }
+
+    public void sendDeleteGroupPostComment(Long groupId, Long postId, Object comment) {
+        messagingTemplate.convertAndSend("/topic/groups/" + groupId + "/posts/" + postId + "/comments/delete", comment);
+    }
 
 }

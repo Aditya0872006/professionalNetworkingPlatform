@@ -1,0 +1,266 @@
+.root {
+  background: white;
+  border-radius: 0.5rem;
+  border: 1px solid #e0e0e0;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.author {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+  }
+}
+
+.avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e0e0e0;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.meta {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.date {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.menuWrapper {
+  position: relative;
+}
+
+.menuBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 0.25rem;
+    height: 1rem;
+    fill: #666;
+  }
+
+  &:hover, &.active {
+    background: #f4f2ee;
+  }
+}
+
+.menu {
+  position: absolute;
+  right: 0;
+  top: 2rem;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+  min-width: 8rem;
+  overflow: hidden;
+
+  button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.65rem 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+
+    &:hover {
+      background: #f4f2ee;
+    }
+  }
+}
+
+.content {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.picture {
+  width: 100%;
+  border-radius: 0.5rem;
+  max-height: 30rem;
+  object-fit: cover;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #666;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    font-size: 0.8rem;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 0.25rem;
+
+  button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.5rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    font-family: inherit;
+
+    &:hover {
+      background: #f4f2ee;
+      color: #000;
+    }
+
+    &.liked {
+      color: var(--primary-color);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+}
+
+.comments {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.commentForm {
+  display: flex;
+}
+
+.comment {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.commentAvatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e0e0e0;
+  flex-shrink: 0;
+}
+
+.commentBody {
+  background: #f4f2ee;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  flex: 1;
+}
+
+.commentAuthor {
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.commentContent {
+  font-size: 0.85rem;
+  margin-top: 0.15rem;
+}
+
+.commentMeta {
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 0.25rem;
+}
+
+.commentEdit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  button {
+    font-size: 0.8rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--primary-color);
+    font-weight: 600;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.commentActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-self: center;
+
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: #666;
+    padding: 0.1rem 0.3rem;
+
+    &:hover {
+      color: #000;
+    }
+  }
+}
