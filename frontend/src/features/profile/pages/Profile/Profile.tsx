@@ -11,14 +11,19 @@ import { RightSidebar } from "../../../feed/components/RightSidebar/RightSidebar
 import { About } from "../../components/About/About";
 import { Activity } from "../../components/Activity/Activity";
 import { Header } from "../../components/Header/Header";
+import { Experience } from "../../components/Experience/Experience";
+import { Education } from "../../components/Education/Education";
+import { Skills } from "../../components/Skills/Skills";
+import { Projects } from "../../components/Projects/Projects";
 import classes from "./Profile.module.scss";
+
 export function Profile() {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
-  const { user: authUser, setUser:setAuthUser } = useAuthentication();
+  const { user: authUser, setUser: setAuthUser } = useAuthentication();
   const [user, setUser] = useState<IUser | null>(null);
 
-  usePageTitle(user?.firstName + " " + user?.lastName);
+  usePageTitle(user ? `${user.firstName} ${user.lastName}` : "Profile");
 
   useEffect(() => {
     setLoading(true);
@@ -41,6 +46,8 @@ export function Profile() {
     return <Loader />;
   }
 
+  const isOwner = Boolean(authUser?.id && user?.id && authUser.id === user.id);
+
   return (
     <div className={classes.profile}>
       <section className={classes.main}>
@@ -48,18 +55,10 @@ export function Profile() {
         <About user={user} authUser={authUser} onUpdate={(user) => setAuthUser(user)} />
         <Activity authUser={authUser} user={user} id={id} />
 
-        <div className={classes.experience}>
-          <h2>Experience</h2>
-          <p>TODO</p>
-        </div>
-        <div className={classes.education}>
-          <h2>Education</h2>
-          <p>TODO</p>
-        </div>
-        <div className={classes.skills}>
-          <h2>Skills</h2>
-          <p>TODO</p>
-        </div>
+        <Experience userId={user?.id} isOwner={isOwner} />
+        <Education userId={user?.id} isOwner={isOwner} />
+        <Skills userId={user?.id} isOwner={isOwner} />
+        <Projects userId={user?.id} isOwner={isOwner} />
       </section>
       <div className={classes.sidebar}>
         <RightSidebar />
@@ -67,3 +66,4 @@ export function Profile() {
     </div>
   );
 }
+

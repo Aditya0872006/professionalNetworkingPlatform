@@ -1,0 +1,152 @@
+.projects {
+  background-color: white;
+  border-radius: 0.3rem;
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+  padding: 1.25rem;
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    h2 {
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin: 0;
+      color: #191919;
+    }
+
+    button {
+      background-color: #f5f5f5;
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      cursor: pointer;
+      border: none;
+
+      &:hover {
+        background-color: #e0e0e0;
+        transform: scale(1.05);
+      }
+
+      svg {
+        width: 1rem;
+        height: 1rem;
+        fill: #333;
+      }
+    }
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .info {
+      flex: 1;
+
+      .titleRow {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.3rem;
+
+        h3 {
+          font-size: 1.05rem;
+          font-weight: 600;
+          margin: 0;
+          color: #191919;
+        }
+
+        .projectLink {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.25rem;
+          font-size: 0.85rem;
+          color: #0a66c2;
+          text-decoration: none;
+          font-weight: 500;
+
+          &:hover {
+            text-decoration: underline;
+          }
+
+          svg {
+            width: 0.75rem;
+            height: 0.75rem;
+            fill: currentColor;
+          }
+        }
+      }
+
+      .description {
+        font-size: 0.9rem;
+        color: #444;
+        white-space: pre-line;
+        margin: 0;
+        line-height: 1.4;
+      }
+    }
+
+    .itemActions {
+      display: flex;
+      gap: 0.5rem;
+      margin-left: 1rem;
+
+      button {
+        background: #f5f5f5;
+        border: none;
+        cursor: pointer;
+        width: 1.8rem;
+        height: 1.8rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #555;
+        transition: background-color 0.2s, color 0.2s;
+
+        &:hover {
+          background-color: #e0e0e0;
+          color: #000;
+        }
+
+        &.deleteBtn:hover {
+          background-color: rgba(209, 26, 42, 0.1);
+          color: #d11a2a;
+        }
+
+        svg {
+          width: 0.8rem;
+          height: 0.8rem;
+          fill: currentColor;
+        }
+      }
+    }
+  }
+
+  .empty {
+    color: #666;
+    font-size: 0.95rem;
+    margin: 0.5rem 0 0 0;
+    font-style: italic;
+  }
+}

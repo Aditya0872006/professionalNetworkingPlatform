@@ -1,0 +1,141 @@
+.skills {
+  background-color: white;
+  border-radius: 0.3rem;
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+  padding: 1.25rem;
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    h2 {
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin: 0;
+      color: #191919;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    button {
+      background-color: #f5f5f5;
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      cursor: pointer;
+      border: none;
+
+      &:hover {
+        background-color: #e0e0e0;
+        transform: scale(1.05);
+      }
+
+      svg {
+        width: 1rem;
+        height: 1rem;
+        fill: #333;
+      }
+    }
+  }
+
+  .addForm {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    align-items: center;
+
+    input {
+      flex: 1;
+      padding: 0.6rem 0.8rem;
+      border-radius: 0.3rem;
+      border: 1px solid #c0c0c0;
+      font-size: 0.95rem;
+
+      &:focus {
+        outline: none;
+        border-color: #0a66c2;
+      }
+    }
+
+    .formButtons {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+
+  .skillsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .skillBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #f3f6f8;
+    color: #191919;
+    padding: 0.45rem 0.9rem;
+    border-radius: 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border: 1px solid #d0d7de;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #e8ecf0;
+    }
+
+    .skillText {
+      cursor: default;
+    }
+
+    .badgeActions {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+
+      button {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        border-radius: 50%;
+        width: 1.2rem;
+        height: 1.2rem;
+        transition: color 0.2s, background-color 0.2s;
+
+        &:hover {
+          color: #d11a2a;
+          background-color: rgba(209, 26, 42, 0.1);
+        }
+
+        svg {
+          width: 0.75rem;
+          height: 0.75rem;
+          fill: currentColor;
+        }
+      }
+    }
+  }
+
+  .empty {
+    color: #666;
+    font-size: 0.95rem;
+    margin: 0.5rem 0 0 0;
+    font-style: italic;
+  }
+}

@@ -74,6 +74,22 @@ public class User {
     @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Connection> receivedConnections;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<com.linkedin.backend.features.profile.model.UserSkill> skills;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<com.linkedin.backend.features.profile.model.Education> educations;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<com.linkedin.backend.features.profile.model.Experience> experiences;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<com.linkedin.backend.features.profile.model.Project> projects;
+
     public User(String email, String password) {
         this.email = email;
         this.password = password;

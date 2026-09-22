@@ -4,6 +4,7 @@ import { Button } from "../../../../components/Button/Button";
 import { Input } from "../../../../components/Input/Input";
 import { usePageTitle } from "../../../../hooks/usePageTitle";
 import { request } from "../../../../utils/api";
+import { useWebSocket } from "../../../ws/WebSocketContextProvider";
 import { GroupCard } from "../../components/GroupCard/GroupCard";
 import { IGroupDetails } from "../../types/groups";
 import classes from "./Groups.module.scss";
@@ -11,6 +12,7 @@ import classes from "./Groups.module.scss";
 export function Groups() {
   usePageTitle("Groups");
   const navigate = useNavigate();
+  const webSocketClient = useWebSocket();
   const [query, setQuery] = useState("");
   const [groups, setGroups] = useState<IGroupDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,6 +35,16 @@ export function Groups() {
     const timeout = setTimeout(() => fetchGroups(query), 350);
     return () => clearTimeout(timeout);
   }, [query]);
+
+  // ─── WebSocket: remove deleted group from list in real-time ───────────────
+
+  useEffect(() => {
+    const sub = webSocketClient?.subscribe("/topic/groups/deleted", (msg) => {
+      const deletedId: number = JSON.parse(msg.body);
+      setGroups((prev) => prev.filter((g) => g.group.id !== deletedId));
+    });
+    return () => sub?.unsubscribe();
+  }, [webSocketClient]);
 
   const handleJoin = (updated: IGroupDetails) => {
     setGroups((prev) =>

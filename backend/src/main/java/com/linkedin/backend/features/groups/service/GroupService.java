@@ -96,6 +96,15 @@ public class GroupService {
         return savedGroup;
     }
 
+    public void deleteGroup(Long groupId, Long adminId) {
+        Group group = getGroup(groupId);
+        User admin = getUser(adminId);
+        requireAdmin(group, admin);
+        // Broadcast deletion before removing so subscribers receive it
+        notificationService.sendGroupDeleted(groupId);
+        groupRepository.delete(group);
+    }
+
     public List<GroupDetailsDto> searchGroups(String query, Long requestingUserId) {
         List<Group> groups;
         if (query == null || query.isBlank()) {
@@ -148,7 +157,9 @@ public class GroupService {
         User admin = getUser(adminId);
         requireAdmin(group, admin);
         group.setIsPrivate(isPrivate);
-        return groupRepository.save(group);
+        Group saved = groupRepository.save(group);
+        notificationService.sendGroupVisibilityUpdate(groupId, isPrivate); // broadcast AFTER save
+        return saved;
     }
 
     // ─── Membership ─────────────────────────────────────────────────────────────
@@ -183,8 +194,9 @@ public class GroupService {
                 notificationService.sendGroupJoinRequestNotification(user, admin.getUser(), groupId);
             }
         }
-
+        notificationService.sendGroupMemberUpdate(groupId, "ADD", saved);
         return saved;
+
     }
 
     public GroupMember acceptJoinRequest(Long groupId, Long adminId, Long targetUserId) {
@@ -203,7 +215,9 @@ public class GroupService {
         member.setStatus(GroupMemberStatus.ACTIVE);
         GroupMember saved = groupMemberRepository.save(member);
         notificationService.sendGroupJoinAcceptedNotification(admin, target, groupId);
+        notificationService.sendGroupMemberUpdate(groupId, "UPDATE", saved);
         return saved;
+
     }
 
     public void rejectJoinRequest(Long groupId, Long adminId, Long targetUserId) {
@@ -220,6 +234,7 @@ public class GroupService {
         }
 
         groupMemberRepository.delete(member);
+        notificationService.sendGroupMemberUpdate(groupId, "REMOVE", member);
     }
 
     public void leaveGroup(Long groupId, Long userId) {
@@ -241,6 +256,7 @@ public class GroupService {
         }
 
         groupMemberRepository.delete(member);
+        notificationService.sendGroupMemberUpdate(groupId, "REMOVE", member);
     }
 
     // ─── Admin: Member Management ────────────────────────────────────────────────
@@ -272,7 +288,10 @@ public class GroupService {
                 .orElseThrow(() -> new IllegalArgumentException("User is not a member of this group."));
 
         groupMemberRepository.delete(member);
+        notificationService.sendGroupMemberUpdate(groupId, "REMOVE", member);
+        notificationService.sendMembershipStatusUpdate(target.getId(), groupId, "REMOVED");
     }
+
 
     public GroupMember banMember(Long groupId, Long adminId, Long targetUserId) {
         Group group = getGroup(groupId);
@@ -292,7 +311,10 @@ public class GroupService {
         }
 
         member.setStatus(GroupMemberStatus.BANNED);
-        return groupMemberRepository.save(member);
+        GroupMember saved = groupMemberRepository.save(member);
+        notificationService.sendGroupMemberUpdate(groupId, "UPDATE", saved);
+        notificationService.sendMembershipStatusUpdate(target.getId(), groupId, "BANNED");
+        return saved;
     }
 
     public GroupMember unbanMember(Long groupId, Long adminId, Long targetUserId) {
@@ -309,8 +331,12 @@ public class GroupService {
         }
 
         member.setStatus(GroupMemberStatus.ACTIVE);
-        return groupMemberRepository.save(member);
+        GroupMember saved = groupMemberRepository.save(member);
+        notificationService.sendGroupMemberUpdate(groupId, "UPDATE", saved);
+        notificationService.sendMembershipStatusUpdate(target.getId(), groupId, "ACTIVE");
+        return saved;
     }
+
 
     public GroupMember promoteMember(Long groupId, Long adminId, Long targetUserId) {
         Group group = getGroup(groupId);
@@ -334,8 +360,12 @@ public class GroupService {
         }
 
         member.setRole(GroupMemberRole.ADMIN);
-        return groupMemberRepository.save(member);
+        GroupMember saved = groupMemberRepository.save(member);
+        notificationService.sendGroupMemberUpdate(groupId, "UPDATE", saved);
+        notificationService.sendMembershipStatusUpdate(target.getId(), groupId, "PROMOTED");
+        return saved;
     }
+
 
     // ─── Group Posts ─────────────────────────────────────────────────────────────
 

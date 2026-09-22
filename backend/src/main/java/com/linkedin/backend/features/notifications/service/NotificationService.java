@@ -14,6 +14,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -24,6 +25,21 @@ public class NotificationService {
     public NotificationService(NotificationRepository notificationRepository, SimpMessagingTemplate messagingTemplate) {
         this.notificationRepository = notificationRepository;
         this.messagingTemplate = messagingTemplate;
+    }
+
+    public void sendGroupMemberUpdate(Long groupId, String action, Object member) {
+        messagingTemplate.convertAndSend("/topic/groups/" + groupId + "/members",
+                Map.of("action", action, "member", member));
+    }
+
+    public void sendGroupVisibilityUpdate(Long groupId, boolean isPrivate) {
+        messagingTemplate.convertAndSend("/topic/groups/" + groupId + "/visibility", isPrivate);
+    }
+
+    public void sendMembershipStatusUpdate(Long targetUserId, Long groupId, String status) {
+        messagingTemplate.convertAndSend(
+                "/topic/users/" + targetUserId + "/groups/" + groupId + "/membership",
+                Map.of("status", status));
     }
 
     public List<Notification> getUserNotifications(User user) {
@@ -168,6 +184,13 @@ public class NotificationService {
 
     public void sendDeleteGroupPostComment(Long groupId, Long postId, Object comment) {
         messagingTemplate.convertAndSend("/topic/groups/" + groupId + "/posts/" + postId + "/comments/delete", comment);
+    }
+
+    public void sendGroupDeleted(Long groupId) {
+        // Notify viewers on the detail page → they navigate away
+        messagingTemplate.convertAndSend("/topic/groups/" + groupId + "/deleted", groupId);
+        // Notify the listing page → it removes the card from the grid
+        messagingTemplate.convertAndSend("/topic/groups/deleted", groupId);
     }
 
 }

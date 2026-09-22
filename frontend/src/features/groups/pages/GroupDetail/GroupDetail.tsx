@@ -4,6 +4,7 @@ import { Button } from "../../../../components/Button/Button";
 import { Loader } from "../../../../components/Loader/Loader";
 import { usePageTitle } from "../../../../hooks/usePageTitle";
 import { request } from "../../../../utils/api";
+import { useAuthentication } from "../../../authentication/contexts/AuthenticationContextProvider";
 import { useWebSocket } from "../../../ws/WebSocketContextProvider";
 import { GroupMemberCardFull } from "../../components/GroupMemberCard/GroupMemberCard";
 import { GroupPost } from "../../components/GroupPost/GroupPost";
@@ -18,6 +19,7 @@ export function GroupDetail() {
   const groupId = Number(id);
   const navigate = useNavigate();
   const webSocketClient = useWebSocket();
+  const { user } = useAuthentication();
 
   const [details, setDetails] = useState<IGroupDetails | null>(null);
   const [posts, setPosts] = useState<IGroupPost[]>([]);
@@ -77,6 +79,75 @@ export function GroupDetail() {
     return () => sub?.unsubscribe();
   }, [groupId, webSocketClient]);
 
+  useEffect(() => {
+    const sub = webSocketClient?.subscribe(
+      `/topic/groups/${groupId}/members`,
+      (msg) => {
+        const { action, member } = JSON.parse(msg.body);
+        if (action === "ADD" || action === "UPDATE") {
+          setMembers((prev) => {
+            const idx = prev.findIndex((m) => m.id === member.id);
+            if (idx === -1) return [...prev, member];
+            return prev.map((m) => (m.id === member.id ? member : m));
+          });
+        } else if (action === "REMOVE") {
+          setMembers((prev) => prev.filter((m) => m.id !== member.id));
+        }
+      }
+    );
+    return () => sub?.unsubscribe();
+  }, [groupId, webSocketClient]);
+
+  useEffect(() => {
+    const sub = webSocketClient?.subscribe(
+      `/topic/groups/${groupId}/visibility`,
+      (msg) => {
+        const isPrivate: boolean = JSON.parse(msg.body);
+        setDetails((prev) =>
+          prev ? { ...prev, group: { ...prev.group, isPrivate } } : prev
+        );
+      }
+    );
+    return () => sub?.unsubscribe();
+  }, [groupId, webSocketClient]);
+
+  // ─── WebSocket: personal membership status (ban / unban / remove) ─────────
+
+  useEffect(() => {
+    if (!user?.id) return;
+    const sub = webSocketClient?.subscribe(
+      `/topic/users/${user.id}/groups/${groupId}/membership`,
+      (msg) => {
+        const { status } = JSON.parse(msg.body) as { status: string };
+        if (status === "REMOVED") {
+          navigate("/groups");
+        } else if (status === "BANNED") {
+          setDetails((prev) =>
+            prev
+              ? { ...prev, member: false, admin: false, memberStatus: "BANNED" as const }
+              : prev
+          );
+        } else if (status === "ACTIVE") {
+          // Unbanned — restore as active member
+          setDetails((prev) =>
+            prev
+              ? { ...prev, member: true, memberStatus: "ACTIVE" as const }
+              : prev
+          );
+        } else if (status === "PROMOTED") {
+          // Promoted to admin — show admin controls immediately
+          setDetails((prev) =>
+            prev
+              ? { ...prev, member: true, admin: true, memberStatus: "ACTIVE" as const }
+              : prev
+          );
+        }
+
+      }
+    );
+    return () => sub?.unsubscribe();
+  }, [groupId, user?.id, webSocketClient, navigate]);
+
   // ─── Join / Leave ─────────────────────────────────────────────────────────
 
   const joinGroup = async () => {
@@ -87,11 +158,11 @@ export function GroupDetail() {
         setDetails((prev) =>
           prev
             ? {
-                ...prev,
-                member: data.status === "ACTIVE",
-                memberStatus: data.status,
-                memberCount: data.status === "ACTIVE" ? prev.memberCount + 1 : prev.memberCount,
-              }
+              ...prev,
+              member: data.status === "ACTIVE",
+              memberStatus: data.status,
+              memberCount: data.status === "ACTIVE" ? prev.memberCount + 1 : prev.memberCount,
+            }
             : prev
         );
       },
@@ -109,17 +180,32 @@ export function GroupDetail() {
     });
   };
 
-  // ─── Visibility toggle ────────────────────────────────────────────────────
+  const deleteGroup = async () => {
+    if (!window.confirm("Are you sure you want to permanently delete this group? This cannot be undone.")) return;
+    await request<void>({
+      endpoint: `/api/v1/groups/${groupId}`,
+      method: "DELETE",
+      onSuccess: () => navigate("/groups"),
+      onFailure: console.error,
+    });
+  };
+
+  // ─── WebSocket: group deleted (redirect all viewers) ─────────────────────
+
+  useEffect(() => {
+    const sub = webSocketClient?.subscribe(`/topic/groups/${groupId}/deleted`, () => {
+      navigate("/groups");
+    });
+    return () => sub?.unsubscribe();
+  }, [groupId, webSocketClient, navigate]);
+
 
   const toggleVisibility = async () => {
     if (!details) return;
-    await request<{ isPrivate: boolean }>({
+    await request<void>({
       endpoint: `/api/v1/groups/${groupId}?isPrivate=${!details.group.isPrivate}`,
       method: "PUT",
-      onSuccess: () =>
-        setDetails((prev) =>
-          prev ? { ...prev, group: { ...prev.group, isPrivate: !prev.group.isPrivate } } : prev
-        ),
+      onSuccess: () => {}, // WebSocket subscription on /visibility handles the state update
       onFailure: console.error,
     });
   };
@@ -132,7 +218,7 @@ export function GroupDetail() {
       method: "POST",
       body: formData,
       contentType: "multipart/form-data",
-      onSuccess: (post) => setPosts((prev) => [post, ...prev]),
+      onSuccess: () => {}, // WebSocket subscription handles adding to list
       onFailure: (err) => { throw new Error(err); },
     });
   };
@@ -218,6 +304,16 @@ export function GroupDetail() {
               {admin && (
                 <Button size="small" outline onClick={toggleVisibility}>
                   {group.isPrivate ? "Make Public" : "Make Private"}
+                </Button>
+              )}
+              {admin && (
+                <Button
+                  size="small"
+                  outline
+                  onClick={deleteGroup}
+                  style={{ color: "#d93025", borderColor: "#d93025" }}
+                >
+                  Delete Group
                 </Button>
               )}
             </div>

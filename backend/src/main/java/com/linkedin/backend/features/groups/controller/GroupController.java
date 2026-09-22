@@ -67,6 +67,14 @@ public class GroupController {
         return ResponseEntity.ok(groupService.updateGroupVisibility(groupId, user.getId(), isPrivate));
     }
 
+    @DeleteMapping("/{groupId}")
+    public ResponseEntity<Response> deleteGroup(
+            @PathVariable Long groupId,
+            @RequestAttribute("authenticatedUser") User user) {
+        groupService.deleteGroup(groupId, user.getId());
+        return ResponseEntity.ok(new Response("Group deleted successfully."));
+    }
+
     // ─── Membership ───────────────────────────────────────────────────────────
 
     @PostMapping("/{groupId}/join")
