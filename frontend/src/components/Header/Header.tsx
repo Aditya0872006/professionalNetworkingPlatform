@@ -245,6 +245,60 @@ export function Header() {
                   </div>
                 </NavLink>
               </li>
+              <li className={classes.network}>
+                <NavLink
+                  onClick={() => {
+                    setShowProfileMenu(false);
+                    if (window.innerWidth <= 1080) {
+                      setShowNavigationMenu(false);
+                    }
+                  }}
+                  to="/jobs"
+                  className={({ isActive }) => (isActive ? classes.active : "")}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    width="24"
+                    height="24"
+                    focusable="false"
+                  >
+                    <path d="M17 6V5a3 3 0 00-3-3h-4a3 3 0 00-3 3v1H2v4a3 3 0 003 3h14a3 3 0 003-3V6h-5zM9 5a1 1 0 011-1h4a1 1 0 011 1v1H9V5zm11 9H4v5a3 3 0 003 3h10a3 3 0 003-3v-5z"/>
+                  </svg>
+                  <div>
+                    <span>Jobs</span>
+                  </div>
+                </NavLink>
+              </li>
+              {user?.role === "ROLE_ADMIN" && (
+                <li className={classes.network}>
+                  <NavLink
+                    onClick={() => {
+                      setShowProfileMenu(false);
+                      if (window.innerWidth <= 1080) {
+                        setShowNavigationMenu(false);
+                      }
+                    }}
+                    to="/admin"
+                    className={({ isActive }) => (isActive ? classes.active : "")}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      width="24"
+                      height="24"
+                      focusable="false"
+                    >
+                      <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                    </svg>
+                    <div>
+                      <span>Admin</span>
+                    </div>
+                  </NavLink>
+                </li>
+              )}
               <li className={classes.messaging}>
                 <NavLink
                   onClick={() => {

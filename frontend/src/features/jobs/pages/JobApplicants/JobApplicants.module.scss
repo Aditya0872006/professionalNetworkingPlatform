@@ -1,0 +1,181 @@
+.root {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+
+  .header {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .backLink {
+      color: #0a66c2;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      color: #191919;
+      margin: 0 0 0.25rem 0;
+    }
+
+    p {
+      color: #666;
+      font-size: 0.85rem;
+      margin: 0;
+    }
+  }
+
+  .applicantsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .applicantCard {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    transition: all 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .candidateProfile {
+      display: flex;
+      gap: 1rem;
+      flex: 1;
+      min-width: 280px;
+
+      .avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #f0f0f0;
+      }
+
+      .details {
+        h3 {
+          font-size: 1.15rem;
+          color: #191919;
+          margin: 0 0 0.25rem 0;
+        }
+
+        .title {
+          font-size: 0.9rem;
+          color: #444;
+          margin-bottom: 0.25rem;
+        }
+
+        .meta {
+          font-size: 0.8rem;
+          color: #777;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .skillsList {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.35rem;
+          margin-top: 0.5rem;
+
+          .skillChip {
+            background: #f3f2ef;
+            color: #555;
+            padding: 0.15rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+          }
+        }
+      }
+    }
+
+    .actionControls {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.75rem;
+      min-width: 200px;
+
+      .statusSelect {
+        padding: 0.4rem 0.6rem;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        font-size: 0.85rem;
+        font-weight: 600;
+        background: white;
+
+        &:focus {
+          border-color: #0a66c2;
+          outline: none;
+        }
+      }
+
+      .resumeBtn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.4rem 0.8rem;
+        background: #eef3f8;
+        color: #0a66c2;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover {
+          background: #d0e4f7;
+        }
+      }
+
+      .appliedTime {
+        font-size: 0.75rem;
+        color: #888;
+      }
+    }
+  }
+
+  .emptyState {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: #666;
+
+    h3 {
+      font-size: 1.2rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      font-size: 0.9rem;
+    }
+  }
+}

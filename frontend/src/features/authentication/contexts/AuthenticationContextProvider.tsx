@@ -3,14 +3,21 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { Loader } from "../../../components/Loader/Loader";
 import { request } from "../../../utils/api";
 
-interface IAuthenticationResponse {
-  token: string;
-  messgage: string;
+export interface IAuthenticationResponse {
+  token?: string;
+  message?: string;
+  role?: "ROLE_USER" | "ROLE_RECRUITER" | "ROLE_ADMIN";
+  recruiterStatus?: "PENDING" | "APPROVED" | "REJECTED" | "PERMANENTLY_REJECTED";
+  rejectionCount?: number;
+  canReapply?: boolean;
 }
+
 export interface IUser {
   id: string;
   email: string;
   emailVerified: boolean;
+  role?: "ROLE_USER" | "ROLE_RECRUITER" | "ROLE_ADMIN";
+  status?: "ACTIVE" | "BLOCKED";
   firstName?: string;
   lastName?: string;
   company?: string;
@@ -22,12 +29,27 @@ export interface IUser {
   about?: string;
 }
 
+export interface IRecruiterRegistrationData {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  companyName: string;
+  companyEmail?: string;
+  companyWebsite?: string;
+  companyDescription?: string;
+  companyLocation?: string;
+  position?: string;
+  location?: string;
+}
+
 interface IAuthenticationContextType {
   user: IUser | null;
   setUser: Dispatch<SetStateAction<IUser | null>>;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, role?: string) => Promise<IAuthenticationResponse>;
   logout: () => void;
   signup: (email: string, password: string) => Promise<void>;
+  signupRecruiter: (data: IRecruiterRegistrationData) => Promise<IAuthenticationResponse>;
   ouathLogin: (code: string, page: "login" | "signup") => Promise<void>;
 }
 
@@ -47,18 +69,42 @@ export function AuthenticationContextProvider() {
     location.pathname === "/authentication/signup" ||
     location.pathname === "/authentication/request-password-reset";
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, role?: string): Promise<IAuthenticationResponse> => {
+    let result: IAuthenticationResponse = {};
     await request<IAuthenticationResponse>({
       endpoint: "/api/v1/authentication/login",
       method: "POST",
-      body: JSON.stringify({ email, password }),
-      onSuccess: ({ token }) => {
-        localStorage.setItem("token", token);
+      body: JSON.stringify({ email, password, role }),
+      onSuccess: (data) => {
+        result = data;
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
       },
       onFailure: (error) => {
         throw new Error(error);
       },
     });
+    return result;
+  };
+
+  const signupRecruiter = async (data: IRecruiterRegistrationData): Promise<IAuthenticationResponse> => {
+    let result: IAuthenticationResponse = {};
+    await request<IAuthenticationResponse>({
+      endpoint: "/api/v1/authentication/register-recruiter",
+      method: "POST",
+      body: JSON.stringify(data),
+      onSuccess: (resp) => {
+        result = resp;
+        if (resp.token) {
+          localStorage.setItem("token", resp.token);
+        }
+      },
+      onFailure: (error) => {
+        throw new Error(error);
+      },
+    });
+    return result;
   };
 
   const ouathLogin = async (code: string, page: "login" | "signup") => {
@@ -67,7 +113,9 @@ export function AuthenticationContextProvider() {
       method: "POST",
       body: JSON.stringify({ code, page }),
       onSuccess: ({ token }) => {
-        localStorage.setItem("token", token);
+        if (token) {
+          localStorage.setItem("token", token);
+        }
       },
       onFailure: (error) => {
         throw new Error(error);
@@ -81,7 +129,9 @@ export function AuthenticationContextProvider() {
       method: "POST",
       body: JSON.stringify({ email, password }),
       onSuccess: ({ token }) => {
-        localStorage.setItem("token", token);
+        if (token) {
+          localStorage.setItem("token", token);
+        }
       },
       onFailure: (error) => {
         throw new Error(error);
@@ -134,6 +184,7 @@ export function AuthenticationContextProvider() {
     user &&
     user.emailVerified &&
     !user.profileComplete &&
+    (user.role === "ROLE_USER" || !user.role) &&
     !location.pathname.includes("/authentication/profile")
   ) {
     return <Navigate to={`/authentication/profile/${user.id}`} />;
@@ -160,6 +211,7 @@ export function AuthenticationContextProvider() {
         login,
         logout,
         signup,
+        signupRecruiter,
         setUser,
         ouathLogin,
       }}

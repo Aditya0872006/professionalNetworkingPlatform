@@ -1,0 +1,317 @@
+.root {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.5rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+  }
+}
+
+.leftSidebar {
+  width: 260px;
+  flex-shrink: 0;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
+
+  .filterCard {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    h3 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: #191919;
+    }
+
+    .filterGroup {
+      margin-bottom: 1rem;
+
+      label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.4rem;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        background: white;
+
+        &:focus {
+          border-color: #0a66c2;
+          outline: none;
+        }
+      }
+    }
+
+    .clearBtn {
+      width: 100%;
+      padding: 0.4rem;
+      border: 1px solid #0a66c2;
+      color: #0a66c2;
+      background: transparent;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+
+      &:hover {
+        background: #f0f7ff;
+      }
+    }
+  }
+
+  .navCard {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 1rem;
+    margin-top: 1rem;
+
+    h4 {
+      font-size: 0.9rem;
+      margin-bottom: 0.6rem;
+      color: #333;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        margin-bottom: 0.5rem;
+
+        a {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #0a66c2;
+          font-weight: 600;
+          font-size: 0.85rem;
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}
+
+.mainContent {
+  flex: 1;
+
+  .headerBar {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .titleSection {
+      h1 {
+        font-size: 1.4rem;
+        color: #191919;
+        margin: 0 0 0.25rem 0;
+      }
+      p {
+        font-size: 0.85rem;
+        color: #666;
+        margin: 0;
+      }
+    }
+
+    .actionBtns {
+      display: flex;
+      gap: 0.75rem;
+    }
+  }
+
+  .jobsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .jobCard {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 1.25rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-color: #0a66c2;
+    }
+
+    .cardHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+
+      .jobTitle {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #0a66c2;
+        margin: 0 0 0.25rem 0;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .companyName {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #333;
+        margin: 0;
+      }
+
+      .badges {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+      }
+    }
+
+    .cardMeta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: #666;
+      margin: 0.6rem 0;
+
+      span {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+    }
+
+    .skillsRow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.6rem 0;
+
+      .skillChip {
+        background: #f3f2ef;
+        color: #444;
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+    }
+
+    .cardFooter {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.85rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #f0f0f0;
+      font-size: 0.8rem;
+      color: #777;
+
+      .applicantsCount {
+        font-weight: 500;
+        color: #0a66c2;
+      }
+
+      .appliedTag {
+        color: #2e7d32;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .expiredTag {
+        color: #c62828;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    &.fullTime {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    &.partTime {
+      background: #e1f5fe;
+      color: #0288d1;
+    }
+    &.contract {
+      background: #fff3e0;
+      color: #ef6c00;
+    }
+    &.internship {
+      background: #f3e5f5;
+      color: #7b1fa2;
+    }
+    &.remote {
+      background: #e0f2f1;
+      color: #00796b;
+    }
+    &.hybrid {
+      background: #ede7f6;
+      color: #512da8;
+    }
+    &.onSite {
+      background: #fbe9e7;
+      color: #d84315;
+    }
+  }
+
+  .emptyState {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: #666;
+
+    h3 {
+      font-size: 1.15rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+  }
+}

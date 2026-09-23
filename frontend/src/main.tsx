@@ -22,6 +22,22 @@ import { Invitations } from "./features/networking/pages/Invitations/Invitations
 import { Network } from "./features/networking/pages/Network/Network";
 import { Posts } from "./features/profile/pages/Posts/Posts";
 import { Profile } from "./features/profile/pages/Profile/Profile";
+
+// Jobs Module
+import { Jobs } from "./features/jobs/pages/Jobs/Jobs";
+import { JobDetail } from "./features/jobs/pages/JobDetail/JobDetail";
+import { MyApplications } from "./features/jobs/pages/MyApplications/MyApplications";
+import { RecruiterJobs } from "./features/jobs/pages/RecruiterJobs/RecruiterJobs";
+import { PostJob } from "./features/jobs/pages/PostJob/PostJob";
+import { JobApplicants } from "./features/jobs/pages/JobApplicants/JobApplicants";
+
+// Admin Module
+import { AdminDashboard } from "./features/admin/pages/AdminDashboard/AdminDashboard";
+import { AdminUsers } from "./features/admin/pages/AdminUsers/AdminUsers";
+import { AdminRecruiters } from "./features/admin/pages/AdminRecruiters/AdminRecruiters";
+import { AdminJobs } from "./features/admin/pages/AdminJobs/AdminJobs";
+import { AdminPosts } from "./features/admin/pages/AdminPosts/AdminPosts";
+
 import "./index.scss";
 
 const router = createBrowserRouter([
@@ -91,6 +107,54 @@ const router = createBrowserRouter([
           {
             path: "groups/:id",
             element: <GroupDetail />,
+          },
+
+          // Jobs Module Routes
+          {
+            path: "jobs",
+            element: <Jobs />,
+          },
+          {
+            path: "jobs/:id",
+            element: <JobDetail />,
+          },
+          {
+            path: "jobs/my-applications",
+            element: <MyApplications />,
+          },
+          {
+            path: "recruiter/jobs",
+            element: <RecruiterJobs />,
+          },
+          {
+            path: "recruiter/jobs/create",
+            element: <PostJob />,
+          },
+          {
+            path: "recruiter/jobs/:jobId/applicants",
+            element: <JobApplicants />,
+          },
+
+          // Admin Module Routes
+          {
+            path: "admin",
+            element: <AdminDashboard />,
+          },
+          {
+            path: "admin/users",
+            element: <AdminUsers />,
+          },
+          {
+            path: "admin/recruiters",
+            element: <AdminRecruiters />,
+          },
+          {
+            path: "admin/jobs",
+            element: <AdminJobs />,
+          },
+          {
+            path: "admin/posts",
+            element: <AdminPosts />,
           },
         ],
       },

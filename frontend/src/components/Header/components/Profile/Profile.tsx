@@ -68,11 +68,64 @@ export function Profile({
               alt=""
             />
             <div className={classes.right}>
-              <div className={classes.name}>{user?.firstName + " " + user?.lastName}</div>
-              <div className={classes.title}>{user?.position + " at " + user?.company}</div>
+              <div className={classes.name}>
+                {user?.firstName + " " + user?.lastName}
+                {user?.role === "ROLE_ADMIN" && (
+                  <span style={{ marginLeft: "6px", fontSize: "0.7rem", backgroundColor: "#e7f3fe", color: "#0a66c2", padding: "2px 6px", borderRadius: "10px", fontWeight: "bold" }}>
+                    Admin
+                  </span>
+                )}
+                {user?.role === "ROLE_RECRUITER" && (
+                  <span style={{ marginLeft: "6px", fontSize: "0.7rem", backgroundColor: "#fef3c7", color: "#b45309", padding: "2px 6px", borderRadius: "10px", fontWeight: "bold" }}>
+                    Recruiter
+                  </span>
+                )}
+              </div>
+              <div className={classes.title}>
+                {user?.position ? `${user.position}${user.company ? ` at ${user.company}` : ""}` : user?.role === "ROLE_ADMIN" ? "Platform Administrator" : ""}
+              </div>
             </div>
           </div>
           <div className={classes.links}>
+            {user?.role === "ROLE_ADMIN" && (
+              <Button
+                size="small"
+                className={classes.button}
+                outline
+                onClick={() => {
+                  setShowProfileMenu(false);
+                  navigate("/admin");
+                }}
+              >
+                Admin Dashboard
+              </Button>
+            )}
+            {user?.role === "ROLE_RECRUITER" && (
+              <>
+                <Button
+                  size="small"
+                  className={classes.button}
+                  outline
+                  onClick={() => {
+                    setShowProfileMenu(false);
+                    navigate("/recruiter/jobs");
+                  }}
+                >
+                  Manage Jobs
+                </Button>
+                <Button
+                  size="small"
+                  className={classes.button}
+                  outline
+                  onClick={() => {
+                    setShowProfileMenu(false);
+                    navigate("/recruiter/jobs/create");
+                  }}
+                >
+                  Post a Job
+                </Button>
+              </>
+            )}
             <Button
               size="small"
               className={classes.button}

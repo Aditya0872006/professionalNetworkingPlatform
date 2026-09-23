@@ -1,0 +1,94 @@
+.root {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+
+  .headerCard {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    span {
+      font-size: 0.9rem;
+      color: #666;
+    }
+  }
+
+  .jobsTableWrapper {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+
+    th {
+      background: #f8f9fa;
+      padding: 0.85rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #555;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+    }
+
+    tr:hover td {
+      background: #fcfcfc;
+    }
+  }
+
+  .statusBadge {
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    &.published {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    &.closed {
+      background: #fff8e1;
+      color: #b78103;
+    }
+    &.removed {
+      background: #ffebee;
+      color: #c62828;
+    }
+  }
+
+  .removeBtn {
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+
+    &:hover {
+      background: #ffcdd2;
+    }
+  }
+
+  .removalInfo {
+    font-size: 0.75rem;
+    color: #c62828;
+    margin-top: 0.25rem;
+  }
+}

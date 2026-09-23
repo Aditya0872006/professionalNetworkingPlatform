@@ -1,0 +1,236 @@
+.root {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  color: #0a66c2;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #f0f0f0;
+
+    .titleSection {
+      h1 {
+        font-size: 1.6rem;
+        color: #191919;
+        margin: 0 0 0.5rem 0;
+      }
+
+      .company {
+        font-size: 1.1rem;
+        color: #555;
+        font-weight: 500;
+        margin: 0 0 0.5rem 0;
+      }
+
+      .location {
+        font-size: 0.9rem;
+        color: #777;
+      }
+    }
+
+    .actionSection {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.5rem;
+    }
+  }
+
+  .deadlineAlert {
+    margin: 1.25rem 0;
+    padding: 0.85rem 1.25rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+
+    &.expired {
+      background: #ffebee;
+      border: 1px solid #ffcdd2;
+      color: #c62828;
+    }
+
+    &.active {
+      background: #e3f2fd;
+      border: 1px solid #bbdefb;
+      color: #1565c0;
+    }
+  }
+
+  .metaGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #f9f9f9;
+    border-radius: 6px;
+
+    .metaItem {
+      display: flex;
+      flex-direction: column;
+
+      .metaLabel {
+        font-size: 0.75rem;
+        color: #777;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .metaValue {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #222;
+      }
+    }
+  }
+
+  .section {
+    margin: 2rem 0;
+
+    h3 {
+      font-size: 1.2rem;
+      color: #191919;
+      margin-bottom: 0.75rem;
+    }
+
+    p {
+      color: #444;
+      line-height: 1.6;
+      font-size: 0.95rem;
+      white-space: pre-line;
+    }
+  }
+
+  .skillsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+
+    .skillTag {
+      background: #eef3f8;
+      color: #0a66c2;
+      padding: 0.4rem 0.85rem;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+  }
+
+  .modalBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+
+    .modal {
+      background: white;
+      border-radius: 8px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+
+      h2 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .fileUploadArea {
+        border: 2px dashed #0a66c2;
+        border-radius: 6px;
+        padding: 1.5rem;
+        text-align: center;
+        background: #f8fbff;
+        margin-bottom: 1.5rem;
+        cursor: pointer;
+
+        input {
+          display: none;
+        }
+
+        .uploadPrompt {
+          font-size: 0.9rem;
+          color: #0a66c2;
+          font-weight: 500;
+        }
+
+        .fileFormatNotice {
+          font-size: 0.75rem;
+          color: #888;
+          margin-top: 0.5rem;
+        }
+
+        .selectedFileName {
+          font-size: 0.9rem;
+          color: #2e7d32;
+          font-weight: 600;
+          margin-top: 0.5rem;
+        }
+      }
+
+      .modalActions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+      }
+    }
+  }
+
+  .appliedNotice {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}

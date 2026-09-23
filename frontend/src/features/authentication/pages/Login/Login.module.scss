@@ -16,7 +16,99 @@
   }
 
   .error {
-    color: red;
+    color: #d32f2f;
     margin-bottom: 1rem;
+    background-color: #fde8e8;
+    padding: 0.6rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+
+  .success {
+    color: #2e7d32;
+    margin-bottom: 1rem;
+    background-color: #edf7ed;
+    padding: 0.6rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+
+  .roleSelector {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    background-color: #f3f2ef;
+    padding: 0.25rem;
+    border-radius: 6px;
+
+    button {
+      flex: 1;
+      padding: 0.45rem 0.5rem;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: #666;
+      transition: all 0.2s ease;
+
+      &.activeRole {
+        background-color: #0a66c2;
+        color: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      }
+
+      &:hover:not(.activeRole) {
+        background-color: #e5e5e5;
+        color: #111;
+      }
+    }
+  }
+
+  .statusBox {
+    margin-bottom: 1rem;
+    padding: 0.9rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+
+    &.pending {
+      background-color: #fff8e1;
+      border: 1px solid #ffe082;
+      color: #b78103;
+    }
+
+    &.rejected {
+      background-color: #ffebee;
+      border: 1px solid #ffcdd2;
+      color: #c62828;
+    }
+
+    &.permanentlyRejected {
+      background-color: #eceff1;
+      border: 1px solid #cfd8dc;
+      color: #37474f;
+    }
+
+    .reapplyBtn {
+      margin-top: 0.6rem;
+      padding: 0.4rem 0.8rem;
+      background-color: #0a66c2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #004182;
+      }
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
   }
 }

@@ -16,14 +16,25 @@ enum NotificationType {
   COMMENT = "COMMENT",
   GROUP_JOIN_REQUEST = "GROUP_JOIN_REQUEST",
   GROUP_JOIN_ACCEPTED = "GROUP_JOIN_ACCEPTED",
+  RECRUITER_APPROVED = "RECRUITER_APPROVED",
+  RECRUITER_REJECTED = "RECRUITER_REJECTED",
+  RECRUITER_PERMANENTLY_REJECTED = "RECRUITER_PERMANENTLY_REJECTED",
+  JOB_REMOVED = "JOB_REMOVED",
+  POST_REMOVED = "POST_REMOVED",
+  JOB_RECOMMENDATION = "JOB_RECOMMENDATION",
+  APPLICATION_STATUS = "APPLICATION_STATUS",
+  USER_BLOCKED = "USER_BLOCKED",
+  USER_UNBLOCKED = "USER_UNBLOCKED",
 }
+
 export interface INotification {
   id: number;
   recipient: IUser;
-  actor: IUser;
+  actor?: IUser | null;
   read: boolean;
-  type: NotificationType;
-  resourceId: number;
+  type: NotificationType | string;
+  resourceId?: number;
+  message?: string;
   creationDate: string;
 }
 
@@ -88,33 +99,68 @@ function Notification({
       method: "PUT",
       onSuccess: () => {
         setNotifications((prev) =>
-          prev.map((notification) =>
-            notification.id === notificationId ? { ...notification, isRead: true } : notification
+          prev.map((n) =>
+            n.id === notificationId ? { ...n, read: true } : n
           )
         );
       },
       onFailure: (error) => console.log(error),
     });
   }
+
+  const handleClick = () => {
+    markNotificationAsRead(notification.id);
+
+    if (
+      notification.type === NotificationType.GROUP_JOIN_REQUEST ||
+      notification.type === NotificationType.GROUP_JOIN_ACCEPTED
+    ) {
+      if (notification.resourceId) navigate(`/groups/${notification.resourceId}`);
+    } else if (
+      notification.type === NotificationType.JOB_RECOMMENDATION ||
+      notification.type === "JOB_RECOMMENDATION"
+    ) {
+      if (notification.resourceId) navigate(`/jobs/${notification.resourceId}`);
+      else navigate("/jobs");
+    } else if (
+      notification.type === NotificationType.APPLICATION_STATUS ||
+      notification.type === "APPLICATION_STATUS"
+    ) {
+      navigate("/jobs/my-applications");
+    } else if (
+      notification.type === NotificationType.RECRUITER_APPROVED ||
+      notification.type === "RECRUITER_APPROVED"
+    ) {
+      navigate("/recruiter/jobs");
+    } else if (
+      notification.type === NotificationType.JOB_REMOVED ||
+      notification.type === NotificationType.POST_REMOVED ||
+      notification.type === NotificationType.USER_BLOCKED ||
+      notification.type === NotificationType.USER_UNBLOCKED
+    ) {
+      // Informational notification — no redirect needed
+    } else if (notification.resourceId) {
+      navigate(`/posts/${notification.resourceId}`);
+    }
+  };
+
+  const actorName = notification.actor
+    ? `${notification.actor.firstName || ""} ${notification.actor.lastName || ""}`.trim()
+    : "System";
+
+  const avatarSrc = notification.actor?.profilePicture
+    ? `${import.meta.env.VITE_API_URL}/api/v1/storage/${notification.actor.profilePicture}`
+    : "/avatar.svg";
+
   return (
     <button
-      onClick={() => {
-        markNotificationAsRead(notification.id);
-        if (
-          notification.type === NotificationType.GROUP_JOIN_REQUEST ||
-          notification.type === NotificationType.GROUP_JOIN_ACCEPTED
-        ) {
-          navigate(`/groups/${notification.resourceId}`);
-        } else {
-          navigate(`/posts/${notification.resourceId}`);
-        }
-      }}
+      onClick={handleClick}
       className={
         notification.read ? classes.notification : `${classes.notification} ${classes.unread}`
       }
     >
       <img
-        src={notification.actor.profilePicture || "/avatar.svg"}
+        src={avatarSrc}
         alt=""
         className={classes.avatar}
       />
@@ -122,18 +168,25 @@ function Notification({
       <p
         style={{
           marginRight: "auto",
+          textAlign: "left",
         }}
       >
-        <strong>{notification.actor.firstName + " " + notification.actor.lastName}</strong>{" "}
-        {notification.type === NotificationType.LIKE
-          ? "liked your post."
-          : notification.type === NotificationType.COMMENT
-          ? "commented on your post."
-          : notification.type === NotificationType.GROUP_JOIN_REQUEST
-          ? "requested to join your group."
-          : notification.type === NotificationType.GROUP_JOIN_ACCEPTED
-          ? "accepted your request to join the group."
-          : "sent a notification."}
+        {notification.message ? (
+          notification.message
+        ) : (
+          <>
+            <strong>{actorName}</strong>{" "}
+            {notification.type === NotificationType.LIKE
+              ? "liked your post."
+              : notification.type === NotificationType.COMMENT
+              ? "commented on your post."
+              : notification.type === NotificationType.GROUP_JOIN_REQUEST
+              ? "requested to join your group."
+              : notification.type === NotificationType.GROUP_JOIN_ACCEPTED
+              ? "accepted your request to join the group."
+              : "sent a notification."}
+          </>
+        )}
       </p>
       <TimeAgo date={notification.creationDate} />
     </button>
