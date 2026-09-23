@@ -29,6 +29,14 @@ public class User {
     private LocalDateTime emailVerificationTokenExpiryDate = null;
     @JsonIgnore
     private String password;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.ROLE_USER;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserStatus status = UserStatus.ACTIVE;
+
     private String passwordResetToken = null;
     private LocalDateTime passwordResetTokenExpiryDate = null;
 
@@ -93,6 +101,15 @@ public class User {
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+        this.role = Role.ROLE_USER;
+        this.status = UserStatus.ACTIVE;
+    }
+
+    public User(String email, String password, Role role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.status = UserStatus.ACTIVE;
     }
 
     public User() {
@@ -108,6 +125,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getEmailVerificationToken() {
@@ -207,6 +228,10 @@ public class User {
         return profileComplete;
     }
 
+    public void setProfileComplete(Boolean profileComplete) {
+        this.profileComplete = profileComplete;
+    }
+
     public List<Post> getPosts() {
         return posts;
     }
@@ -271,6 +296,14 @@ public class User {
         this.receivedConnections = receivedConnections;
     }
 
+    public List<com.linkedin.backend.features.profile.model.UserSkill> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<com.linkedin.backend.features.profile.model.UserSkill> skills) {
+        this.skills = skills;
+    }
+
     public String getCoverPicture() {
         return coverPicture;
     }
@@ -285,5 +318,21 @@ public class User {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
     }
 }

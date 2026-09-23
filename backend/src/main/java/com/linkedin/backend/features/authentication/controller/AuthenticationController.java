@@ -29,9 +29,12 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/authentication")
 public class AuthenticationController {
     private final AuthenticationService authenticationUserService;
+    private final com.linkedin.backend.features.recruiter.service.RecruiterService recruiterService;
 
-    public AuthenticationController(AuthenticationService authenticationUserService) {
+    public AuthenticationController(AuthenticationService authenticationUserService,
+                                    com.linkedin.backend.features.recruiter.service.RecruiterService recruiterService) {
         this.authenticationUserService = authenticationUserService;
+        this.recruiterService = recruiterService;
     }
 
     @PostMapping("/login")
@@ -47,6 +50,12 @@ public class AuthenticationController {
     @PostMapping("/register")
     public AuthenticationResponseBody registerPage(@Valid @RequestBody AuthenticationRequestBody registerRequestBody) {
         return authenticationUserService.register(registerRequestBody);
+    }
+
+    @PostMapping("/register-recruiter")
+    public AuthenticationResponseBody registerRecruiter(
+            @Valid @RequestBody com.linkedin.backend.features.authentication.dto.RecruiterRegistrationDto dto) {
+        return recruiterService.registerRecruiter(dto);
     }
 
     @DeleteMapping("/delete")

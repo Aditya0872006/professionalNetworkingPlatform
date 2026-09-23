@@ -11,4 +11,5 @@ import java.util.List;
 public interface UserSkillRepository extends JpaRepository<UserSkill, Long> {
     List<UserSkill> findByUserOrderByIdAsc(User user);
     List<UserSkill> findByUserIdOrderByIdAsc(Long userId);
+    List<UserSkill> findBySkillNameIgnoreCaseIn(List<String> skillNames);
 }

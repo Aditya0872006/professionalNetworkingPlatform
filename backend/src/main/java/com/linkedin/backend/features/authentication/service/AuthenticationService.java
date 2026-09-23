@@ -47,6 +47,7 @@ public class AuthenticationService {
     private final EmailService emailService;
     private final RestTemplate restTemplate;
     private final StorageService storageService;
+    private final com.linkedin.backend.features.recruiter.repository.RecruiterProfileRepository recruiterProfileRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -56,12 +57,14 @@ public class AuthenticationService {
     private String googleClientSecret;
 
     public AuthenticationService(UserRepository userRepository, Encoder encoder, JsonWebToken jsonWebToken,
-            EmailService emailService, RestTemplate restTemplate) {
+            EmailService emailService, RestTemplate restTemplate,
+            com.linkedin.backend.features.recruiter.repository.RecruiterProfileRepository recruiterProfileRepository) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.jsonWebToken = jsonWebToken;
         this.emailService = emailService;
         this.restTemplate = restTemplate;
+        this.recruiterProfileRepository = recruiterProfileRepository;
         this.storageService = new StorageService();
     }
 
@@ -113,14 +116,71 @@ public class AuthenticationService {
         }
     }
 
+    private static final java.util.regex.Pattern STRONG_PASSWORD_PATTERN =
+            java.util.regex.Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9\\s]).{8,}$");
+
+    public void validateStrongPassword(String password) {
+        if (password == null || !STRONG_PASSWORD_PATTERN.matcher(password).matches()) {
+            throw new IllegalArgumentException("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one numeric digit, and one special character.");
+        }
+    }
+
     public AuthenticationResponseBody login(AuthenticationRequestBody loginRequestBody) {
         User user = userRepository.findByEmail(loginRequestBody.email())
                 .orElseThrow(() -> new IllegalArgumentException("User not found."));
         if (!encoder.matches(loginRequestBody.password(), user.getPassword())) {
             throw new IllegalArgumentException("Password is incorrect.");
         }
+
+        if (user.getStatus() == com.linkedin.backend.features.authentication.model.UserStatus.BLOCKED) {
+            throw new IllegalArgumentException("Account is blocked. Please contact support.");
+        }
+
+        if (loginRequestBody.role() != null && !loginRequestBody.role().isBlank()) {
+            String requested = loginRequestBody.role().trim().toUpperCase();
+            if (!requested.startsWith("ROLE_")) {
+                requested = "ROLE_" + requested;
+            }
+            if (!user.getRole().name().equals(requested)) {
+                throw new IllegalArgumentException("Access denied: You cannot log in as " +
+                        loginRequestBody.role() + " with this account.");
+            }
+        }
+
         String token = jsonWebToken.generateToken(loginRequestBody.email());
-        return new AuthenticationResponseBody(token, "Authentication succeeded.");
+
+        if (user.getRole() == com.linkedin.backend.features.authentication.model.Role.ROLE_RECRUITER) {
+            Optional<com.linkedin.backend.features.recruiter.model.RecruiterProfile> profileOpt =
+                    recruiterProfileRepository.findByUserId(user.getId());
+            if (profileOpt.isPresent()) {
+                com.linkedin.backend.features.recruiter.model.RecruiterProfile profile = profileOpt.get();
+                boolean canReapply = profile.getStatus() == com.linkedin.backend.features.recruiter.model.RecruiterStatus.REJECTED
+                        && profile.getRejectionCount() < 5;
+                String statusMsg = switch (profile.getStatus()) {
+                    case PENDING -> "Your recruiter approval is pending.";
+                    case APPROVED -> "Authentication succeeded.";
+                    case REJECTED -> "Your recruiter application was rejected (Rejections: " + profile.getRejectionCount() + "/5).";
+                    case PERMANENTLY_REJECTED -> "Your recruiter application has reached the maximum number of rejections (5). You cannot reapply.";
+                };
+                return new AuthenticationResponseBody(
+                        token,
+                        statusMsg,
+                        user.getRole().name(),
+                        profile.getStatus().name(),
+                        profile.getRejectionCount(),
+                        canReapply
+                );
+            }
+        }
+
+        return new AuthenticationResponseBody(
+                token,
+                "Authentication succeeded.",
+                user.getRole().name(),
+                user.getStatus().name(),
+                null,
+                null
+        );
     }
 
     public AuthenticationResponseBody googleLoginOrSignup(String code, String page) {
@@ -169,8 +229,12 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponseBody register(AuthenticationRequestBody registerRequestBody) {
+        validateStrongPassword(registerRequestBody.password());
+
         User user = userRepository.save(new User(
-                registerRequestBody.email(), encoder.encode(registerRequestBody.password())));
+                registerRequestBody.email(),
+                encoder.encode(registerRequestBody.password()),
+                com.linkedin.backend.features.authentication.model.Role.ROLE_USER));
 
         String emailVerificationToken = generateEmailVerificationToken();
         String hashedToken = encoder.encode(emailVerificationToken);
@@ -235,6 +299,7 @@ public class AuthenticationService {
     }
 
     public void resetPassword(String email, String newPassword, String token) {
+        validateStrongPassword(newPassword);
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent() && encoder.matches(token, user.get().getPasswordResetToken())
                 && !user.get().getPasswordResetTokenExpiryDate().isBefore(LocalDateTime.now())) {

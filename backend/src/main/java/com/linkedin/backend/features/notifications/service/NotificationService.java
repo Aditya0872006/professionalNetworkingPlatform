@@ -193,4 +193,55 @@ public class NotificationService {
         messagingTemplate.convertAndSend("/topic/groups/deleted", groupId);
     }
 
+    public Notification sendCustomNotification(User actor, User recipient, NotificationType type, Long resourceId, String message) {
+        Notification notification = new Notification(actor, recipient, type, resourceId, message);
+        Notification saved = notificationRepository.save(notification);
+        messagingTemplate.convertAndSend("/topic/users/" + recipient.getId() + "/notifications", saved);
+        return saved;
+    }
+
+    public void sendRecruiterApprovalNotification(User recruiter) {
+        sendCustomNotification(null, recruiter, NotificationType.RECRUITER_APPROVED, recruiter.getId(),
+                "Congratulations! Your recruiter application has been approved. You can now post jobs.");
+    }
+
+    public void sendRecruiterRejectionNotification(User recruiter, int rejectionCount, boolean permanentlyRejected) {
+        String msg = permanentlyRejected
+                ? "Your recruiter application has reached the maximum number of rejections (5/5). You cannot reapply."
+                : "Your recruiter application was rejected (Rejection " + rejectionCount + "/5). You may reapply with updated information.";
+        NotificationType type = permanentlyRejected
+                ? NotificationType.RECRUITER_PERMANENTLY_REJECTED
+                : NotificationType.RECRUITER_REJECTED;
+        sendCustomNotification(null, recruiter, type, recruiter.getId(), msg);
+    }
+
+    public void sendPostRemovedByAdminNotification(User postAuthor, Long postId) {
+        sendCustomNotification(null, postAuthor, NotificationType.POST_REMOVED, postId,
+                "Your post was removed by an administrator.");
+    }
+
+    public void sendJobRemovedByAdminNotification(User recruiter, Long jobId, String jobTitle) {
+        sendCustomNotification(null, recruiter, NotificationType.JOB_REMOVED, jobId,
+                "Your job post '" + jobTitle + "' was removed by an administrator.");
+    }
+
+    public void sendApplicationStatusNotification(User applicant, Long jobId, String jobTitle, String company, String status) {
+        sendCustomNotification(null, applicant, NotificationType.APPLICATION_STATUS, jobId,
+                "Your application for " + jobTitle + " at " + company + " has been " + status.toLowerCase().replace('_', ' ') + ".");
+    }
+
+    public void sendJobRecommendationNotification(User candidate, Long jobId, String jobTitle, String company) {
+        sendCustomNotification(null, candidate, NotificationType.JOB_RECOMMENDATION, jobId,
+                "New job matching your profile: " + jobTitle + " at " + company + ".");
+    }
+
+    public void sendUserBlockedNotification(User user) {
+        sendCustomNotification(null, user, NotificationType.USER_BLOCKED, user.getId(),
+                "Your account has been blocked by an administrator.");
+    }
+
+    public void sendUserUnblockedNotification(User user) {
+        sendCustomNotification(null, user, NotificationType.USER_UNBLOCKED, user.getId(),
+                "Your account has been unblocked by an administrator.");
+    }
 }

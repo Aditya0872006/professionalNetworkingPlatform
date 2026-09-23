@@ -1,0 +1,11 @@
+﻿
+Name               
+----               
+.gitignore         
+build.gradle.kts   
+docker-compose.yml 
+gradlew            
+gradlew.bat        
+settings.gradle.kts
+
+

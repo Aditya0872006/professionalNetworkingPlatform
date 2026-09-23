@@ -1,6 +1,7 @@
 package com.linkedin.backend.features.authentication.filter;
 
 import com.linkedin.backend.features.authentication.model.User;
+import com.linkedin.backend.features.authentication.model.UserStatus;
 import com.linkedin.backend.features.authentication.service.AuthenticationService;
 import com.linkedin.backend.features.authentication.utils.JsonWebToken;
 import jakarta.servlet.FilterChain;
@@ -8,6 +9,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -19,6 +23,7 @@ public class AuthenticationFilter extends HttpFilter {
     private final List<String> unsecuredEndpoints = Arrays.asList(
             "/api/v1/authentication/login",
             "/api/v1/authentication/register",
+            "/api/v1/authentication/register-recruiter",
             "/api/v1/authentication/send-password-reset-token",
             "/api/v1/authentication/reset-password");
 
@@ -44,7 +49,10 @@ public class AuthenticationFilter extends HttpFilter {
 
         String path = request.getRequestURI();
 
-        if (unsecuredEndpoints.contains(path) || path.startsWith("/api/v1/authentication/oauth") || path.startsWith("/api/v1/storage")) {
+        if (unsecuredEndpoints.contains(path)
+                || path.startsWith("/api/v1/authentication/oauth")
+                || path.startsWith("/api/v1/storage")
+                || path.startsWith("/ws")) {
             chain.doFilter(request, response);
             return;
         }
@@ -63,7 +71,21 @@ public class AuthenticationFilter extends HttpFilter {
 
             String email = jsonWebTokenService.getEmailFromToken(token);
             User user = authenticationService.getUser(email);
+
+            if (user.getStatus() == UserStatus.BLOCKED) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"message\": \"Account is blocked. Please contact support.\"}");
+                return;
+            }
+
             request.setAttribute("authenticatedUser", user);
+
+            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().name());
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(user, null, List.of(authority));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
             chain.doFilter(request, response);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

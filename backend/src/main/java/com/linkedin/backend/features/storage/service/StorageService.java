@@ -55,8 +55,32 @@ public class StorageService {
         Files.delete(file);
     }
 
+    public String saveDocument(MultipartFile file) throws IOException {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("File cannot be empty");
+        }
+
+        if (isFileTooLarge(file)) {
+            throw new IllegalArgumentException("File is too large (maximum 10MB)");
+        }
+
+        String originalName = file.getOriginalFilename();
+        if (originalName == null || !originalName.contains(".")) {
+            throw new IllegalArgumentException("Invalid file format");
+        }
+
+        String fileExtension = getFileExtension(originalName).toLowerCase();
+        if (!fileExtension.equals(".pdf") && !fileExtension.equals(".doc") && !fileExtension.equals(".docx")) {
+            throw new IllegalArgumentException("Only PDF, DOC, and DOCX files are allowed for resumes.");
+        }
+
+        String fileName = "resume_" + UUID.randomUUID() + fileExtension;
+        Files.copy(file.getInputStream(), this.rootLocation.resolve(fileName));
+        return fileName;
+    }
+
     public MediaType getMediaType(String filename) {
-        String extension = getFileExtension(filename);
+        String extension = getFileExtension(filename).toLowerCase();
         switch (extension) {
             case ".png":
                 return MediaType.IMAGE_PNG;
@@ -65,6 +89,12 @@ public class StorageService {
                 return MediaType.IMAGE_JPEG;
             case ".gif":
                 return MediaType.IMAGE_GIF;
+            case ".pdf":
+                return MediaType.APPLICATION_PDF;
+            case ".doc":
+                return MediaType.valueOf("application/msword");
+            case ".docx":
+                return MediaType.valueOf("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
             default:
                 return MediaType.APPLICATION_OCTET_STREAM;
         }

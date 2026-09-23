@@ -7,6 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.linkedin.backend.features.authentication.model.User;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,13 +19,21 @@ public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne
     private User recipient;
+
     @ManyToOne
     private User actor;
+
     private boolean isRead;
+
+    @Enumerated(EnumType.STRING)
     private NotificationType type;
+
     private Long resourceId;
+
+    private String message;
 
     @CreationTimestamp
     private LocalDateTime creationDate;
@@ -34,6 +44,15 @@ public class Notification {
         this.type = type;
         this.isRead = false;
         this.resourceId = resourceId;
+    }
+
+    public Notification(User actor, User recipient, NotificationType type, Long resourceId, String message) {
+        this.actor = actor;
+        this.recipient = recipient;
+        this.type = type;
+        this.isRead = false;
+        this.resourceId = resourceId;
+        this.message = message;
     }
 
     public Notification() {
@@ -86,6 +105,14 @@ public class Notification {
 
     public void setResourceId(Long resourceId) {
         this.resourceId = resourceId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public LocalDateTime getCreationDate() {
