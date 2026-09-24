@@ -1,0 +1,36 @@
+﻿Starting a Gradle Daemon, 2 incompatible and 2 stopped Daemons could not be reused, use --status for details
+
+> Task :compileJava
+.\gradlew.bat : C:\Users\Aditya sharma\Desktop\professionalNetworkingPlatform\backend\src\main\java\com\linked
+in\backend\features\authentication\service\AuthenticationService.java:232: error: cannot find symbol
+At line:1 char:77
++ ... form\backend'; .\gradlew.bat compileJava --console=plain 2>&1 | Out-F ...
++                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\Aditya...not find symbol:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+        if (userRepository.existsByEmail(registerRequestBody.email())) {
+                          ^
+  symbol:   method existsByEmail(String)
+  location: variable userRepository of type UserRepository
+C:\Users\Aditya sharma\Desktop\professionalNetworkingPlatform\backend\src\main\java\com\linkedin\backend\featu
+res\authentication\service\AuthenticationService.java:233: error: package com.linkedin.backend.exception does 
+not exist
+            throw new com.linkedin.backend.exception.DuplicateEmailException(
+                                                    ^
+2 errors
+
+> Task :compileJava FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':compileJava'.
+> Compilation failed; see the compiler error output for details.
+
+* Try:
+> Run with --info option to get more log output.
+> Run with --scan to get full insights.
+
+BUILD FAILED in 17s
+1 actionable task: 1 executed

@@ -1,0 +1,6 @@
+﻿C:\Users\Aditya sharma\Desktop\professionalNetworkingPlatform\backend\src\main\java\com\linkedin\backend\features\authentication\dto\RecruiterRegistrationDto.java
+C:\Users\Aditya sharma\Desktop\professionalNetworkingPlatform\backend\src\main\java\com\linkedin\backend\features\recruiter\controller\RecruiterController.java
+C:\Users\Aditya sharma\Desktop\professionalNetworkingPlatform\backend\src\main\java\com\linkedin\backend\features\recruiter\model\RecruiterProfile.java
+C:\Users\Aditya sharma\Desktop\professionalNetworkingPlatform\backend\src\main\java\com\linkedin\backend\features\recruiter\model\RecruiterStatus.java
+C:\Users\Aditya sharma\Desktop\professionalNetworkingPlatform\backend\src\main\java\com\linkedin\backend\features\recruiter\repository\RecruiterProfileRepository.java
+C:\Users\Aditya sharma\Desktop\professionalNetworkingPlatform\backend\src\main\java\com\linkedin\backend\features\recruiter\service\RecruiterService.java

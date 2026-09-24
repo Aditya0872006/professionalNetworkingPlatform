@@ -1,28 +1,29 @@
-package com.linkedin.backend.features.authentication.repository;
+    package com.linkedin.backend.features.authentication.repository;
 
-import java.util.List;
-import java.util.Optional;
+    import java.util.List;
+    import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+    import org.springframework.data.jpa.repository.JpaRepository;
+    import org.springframework.stereotype.Repository;
 
-import com.linkedin.backend.features.authentication.model.Role;
-import com.linkedin.backend.features.authentication.model.User;
-import com.linkedin.backend.features.authentication.model.UserStatus;
+    import com.linkedin.backend.features.authentication.model.Role;
+    import com.linkedin.backend.features.authentication.model.User;
+    import com.linkedin.backend.features.authentication.model.UserStatus;
 
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
+    @Repository
+    public interface UserRepository extends JpaRepository<User, Long> {
+        Optional<User> findByEmail(String email);
+        boolean existsByEmail(String email);
 
-    List<User> findAllByIdNot(Long id);
+        List<User> findAllByIdNot(Long id);
 
-    long countByRole(Role role);
+        long countByRole(Role role);
 
-    long countByStatus(UserStatus status);
+        long countByStatus(UserStatus status);
 
-    List<User> findByRole(Role role);
+        List<User> findByRole(Role role);
 
-    List<User> findByStatus(UserStatus status);
+        List<User> findByStatus(UserStatus status);
 
-    List<User> findByRoleAndStatus(Role role, UserStatus status);
-}
+        List<User> findByRoleAndStatus(Role role, UserStatus status);
+    }

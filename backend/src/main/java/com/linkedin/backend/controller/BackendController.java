@@ -52,10 +52,16 @@ public class BackendController {
         return ResponseEntity.badRequest().body(Map.of("message", "Required request parameter is missing."));
     }
 
+//    @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
+//    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException e) {
+//        return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+//    }
+
     @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
-    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException e) {
+    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(RuntimeException e) {
         return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
     }
+
 
     @ExceptionHandler(NoSuchFileException.class)
     public ResponseEntity<Map<String, String>> handleNoSuchFileException(NoSuchFileException e) {

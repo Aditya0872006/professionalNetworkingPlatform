@@ -137,11 +137,11 @@ public class AuthenticationService {
         }
 
         if (loginRequestBody.role() != null && !loginRequestBody.role().isBlank()) {
-            String requested = loginRequestBody.role().trim().toUpperCase();
-            if (!requested.startsWith("ROLE_")) {
-                requested = "ROLE_" + requested;
-            }
-            if (!user.getRole().name().equals(requested)) {
+            // Normalize: strip any existing ROLE_ prefix, then always prepend it once.
+            // This prevents "ROLE_USER" sent from the frontend from becoming "ROLE_ROLE_USER".
+            String raw = loginRequestBody.role().trim().toUpperCase();
+            String normalized = raw.startsWith("ROLE_") ? raw : "ROLE_" + raw;
+            if (!user.getRole().name().equals(normalized)) {
                 throw new IllegalArgumentException("Access denied: You cannot log in as " +
                         loginRequestBody.role() + " with this account.");
             }
@@ -229,6 +229,10 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponseBody register(AuthenticationRequestBody registerRequestBody) {
+        if (userRepository.existsByEmail(registerRequestBody.email())) {
+            throw new IllegalArgumentException(
+                    "An account with this email already exists.");
+        }
         validateStrongPassword(registerRequestBody.password());
 
         User user = userRepository.save(new User(

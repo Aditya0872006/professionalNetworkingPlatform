@@ -1,0 +1,67 @@
+﻿diff --git a/backend/src/main/java/com/linkedin/backend/configuration/SecurityConfiguration.java b/backend/src/main/java/com/linkedin/backend/configuration/SecurityConfiguration.java
+index 54efcb0..c4c55a6 100644
+--- a/backend/src/main/java/com/linkedin/backend/configuration/SecurityConfiguration.java
++++ b/backend/src/main/java/com/linkedin/backend/configuration/SecurityConfiguration.java
+@@ -48,7 +48,13 @@ public class SecurityConfiguration {
+     @Bean
+     public CorsConfigurationSource corsConfigurationSource() {
+         CorsConfiguration configuration = new CorsConfiguration();
+-        configuration.setAllowedOriginPatterns(List.of("*"));
++        // Must use explicit origins (not "*") when allowCredentials is true
++        configuration.setAllowedOriginPatterns(List.of(
++                "http://localhost:3000",
++                "http://localhost:5173",
++                "http://127.0.0.1:3000",
++                "http://127.0.0.1:5173"
++        ));
+         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+         configuration.setAllowedHeaders(List.of("*"));
+         configuration.setAllowCredentials(true);
+diff --git a/backend/src/main/java/com/linkedin/backend/features/authentication/filter/AuthenticationFilter.java b/backend/src/main/java/com/linkedin/backend/features/authentication/filter/AuthenticationFilter.java
+index dfbe0da..ffb90b0 100644
+--- a/backend/src/main/java/com/linkedin/backend/features/authentication/filter/AuthenticationFilter.java
++++ b/backend/src/main/java/com/linkedin/backend/features/authentication/filter/AuthenticationFilter.java
+@@ -38,9 +38,8 @@ public class AuthenticationFilter extends HttpFilter {
+     @Override
+     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+             throws IOException, ServletException {
+-        response.addHeader("Access-Control-Allow-Origin", "*");
+-        response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+-        response.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
++        // CORS is handled centrally by Spring Security's corsConfigurationSource() in SecurityConfiguration.
++        // Do NOT add Access-Control-Allow-* headers here ΓÇö duplicating them causes browser CORS failures.
+ 
+         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+             response.setStatus(HttpServletResponse.SC_OK);
+diff --git a/backend/src/main/java/com/linkedin/backend/features/authentication/service/AuthenticationService.java b/backend/src/main/java/com/linkedin/backend/features/authentication/service/AuthenticationService.java
+index 3bb5051..7357a0b 100644
+--- a/backend/src/main/java/com/linkedin/backend/features/authentication/service/AuthenticationService.java
++++ b/backend/src/main/java/com/linkedin/backend/features/authentication/service/AuthenticationService.java
+@@ -137,11 +137,11 @@ public class AuthenticationService {
+         }
+ 
+         if (loginRequestBody.role() != null && !loginRequestBody.role().isBlank()) {
+-            String requested = loginRequestBody.role().trim().toUpperCase();
+-            if (!requested.startsWith("ROLE_")) {
+-                requested = "ROLE_" + requested;
+-            }
+-            if (!user.getRole().name().equals(requested)) {
++            // Normalize: strip any existing ROLE_ prefix, then always prepend it once.
++            // This prevents "ROLE_USER" sent from the frontend from becoming "ROLE_ROLE_USER".
++            String raw = loginRequestBody.role().trim().toUpperCase();
++            String normalized = raw.startsWith("ROLE_") ? raw : "ROLE_" + raw;
++            if (!user.getRole().name().equals(normalized)) {
+                 throw new IllegalArgumentException("Access denied: You cannot log in as " +
+                         loginRequestBody.role() + " with this account.");
+             }
+@@ -229,6 +229,10 @@ public class AuthenticationService {
+     }
+ 
+     public AuthenticationResponseBody register(AuthenticationRequestBody registerRequestBody) {
++        if (userRepository.existsByEmail(registerRequestBody.email())) {
++            throw new com.linkedin.backend.exception.DuplicateEmailException(
++                    "An account with this email already exists.");
++        }
+         validateStrongPassword(registerRequestBody.password());
+ 
+         User user = userRepository.save(new User(
