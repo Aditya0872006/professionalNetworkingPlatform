@@ -86,7 +86,7 @@ public class AuthenticationService {
             user.get().setEmailVerificationTokenExpiryDate(LocalDateTime.now().plusMinutes(durationInMinutes));
             userRepository.save(user.get());
             String subject = "Email Verification";
-            String body = String.format("Only one step to take full advantage of LinkedIn.\n\n"
+            String body = String.format("Only one step to take full advantage of Our Professional Networking Platform.\n\n"
                     + "Enter this code to verify your email: " + "%s\n\n" + "The code will expire in " + "%s"
                     + " minutes.",
                     emailVerificationToken, durationInMinutes);
@@ -249,7 +249,7 @@ public class AuthenticationService {
 
         String subject = "Email Verification";
         String body = String.format("""
-                Only one step to take full advantage of LinkedIn.
+                Only one step to take full advantage of Professional Networking Platform.
 
                 Enter this code to verify your email: %s. The code will expire in %s minutes.""",
                 emailVerificationToken, durationInMinutes);

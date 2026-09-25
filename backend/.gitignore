@@ -9,3 +9,8 @@ uploads/*
 !uploads/.gitkeep
 bin
 
+
+application.properties
+.env
+
+
