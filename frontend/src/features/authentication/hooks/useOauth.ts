@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthentication } from "../contexts/AuthenticationContextProvider";
 
-const GOOGLE_OAUTH2_CLIENT_ID = import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID;
-const VITE_GOOGLE_OAUTH_URL = import.meta.env.VITE_GOOGLE_OAUTH_URL;
+const GOOGLE_OAUTH2_CLIENT_ID = "552974778711-8t1imivm6kgq5pg4tfdd2h3dngom3qq4.apps.googleusercontent.com";
+const VITE_GOOGLE_OAUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 
 export function useOauth(page: "login" | "signup") {
   const [searchParams, setSearchParams] = useSearchParams();

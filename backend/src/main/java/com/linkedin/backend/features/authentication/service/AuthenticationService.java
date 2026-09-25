@@ -51,8 +51,10 @@ public class AuthenticationService {
 
     @PersistenceContext
     private EntityManager entityManager;
+
     @Value("${oauth.google.client.id}")
     private String googleClientId;
+
     @Value("${oauth.google.client.secret}")
     private String googleClientSecret;
 
