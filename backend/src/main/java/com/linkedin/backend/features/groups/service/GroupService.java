@@ -392,7 +392,7 @@ public class GroupService {
                     "You must be an active member to post in this group.");
         }
 
-        GroupPost post = new GroupPost(content, user, group);
+        GroupPost post = new GroupPost(content.replaceAll("<[^>]*>", ""), user, group);
         post.setLikes(new HashSet<>());
 
         if (picture != null && !picture.isEmpty()) {
@@ -419,7 +419,7 @@ public class GroupService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only edit your own posts.");
         }
 
-        post.setContent(content);
+        post.setContent(content.replaceAll("<[^>]*>", ""));
 
         if (picture != null && !picture.isEmpty()) {
             String pictureUrl = storageService.saveImage(picture);
@@ -486,7 +486,7 @@ public class GroupService {
                     "You must be a member to comment in this group.");
         }
 
-        GroupPostComment comment = groupPostCommentRepository.save(new GroupPostComment(post, user, content));
+        GroupPostComment comment = groupPostCommentRepository.save(new GroupPostComment(post, user, content.replaceAll("<[^>]*>", "")));
         notificationService.sendGroupPostComment(groupId, postId, comment);
         return comment;
     }
@@ -507,7 +507,7 @@ public class GroupService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only edit your own comments.");
         }
 
-        comment.setContent(content);
+        comment.setContent(content.replaceAll("<[^>]*>", ""));
         GroupPostComment saved = groupPostCommentRepository.save(comment);
         notificationService.sendGroupPostComment(groupId, postId, saved);
         return saved;

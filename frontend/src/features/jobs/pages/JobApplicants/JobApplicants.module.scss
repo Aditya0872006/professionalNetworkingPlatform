@@ -1,5 +1,5 @@
 .root {
-  max-width: 1000px;
+  max-width: 1040px;
   margin: 2rem auto;
   padding: 0 1rem;
 
@@ -39,8 +39,266 @@
       font-size: 0.85rem;
       margin: 0;
     }
+
+    .headerActions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+
+      .aiMatchButton {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        color: white;
+        border: none;
+        border-radius: 24px;
+        padding: 0.6rem 1.25rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+        transition: all 0.2s ease;
+
+        &:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+          background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+        }
+
+        &:disabled {
+          opacity: 0.65;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        .spinner {
+          width: 14px;
+          height: 14px;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-top-color: white;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+        }
+      }
+    }
   }
 
+  .successMessage {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 0.85rem 1.25rem;
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
+    font-size: 0.9rem;
+    border: 1px solid #c8e6c9;
+    font-weight: 500;
+  }
+
+  .errorMessage {
+    background: #fef2f2;
+    color: #b91c1c;
+    padding: 0.85rem 1.25rem;
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
+    font-size: 0.9rem;
+    border: 1px solid #fecaca;
+    font-weight: 500;
+  }
+
+  /* Top 3 AI Matches Spotlight Section */
+  .topMatchesSection {
+    background: linear-gradient(180deg, #f8faff 0%, #f0f4ff 100%);
+    border: 1.5px solid #c7d2fe;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
+
+    .topMatchesHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+
+      h2 {
+        font-size: 1.25rem;
+        color: #1e1b4b;
+        margin: 0 0 0.25rem 0;
+        font-weight: 700;
+      }
+
+      p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #4b5563;
+      }
+
+      .sortToggleBtn {
+        background: white;
+        color: #4f46e5;
+        border: 1.5px solid #c7d2fe;
+        border-radius: 20px;
+        padding: 0.45rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #eef2ff;
+          border-color: #4f46e5;
+        }
+      }
+    }
+
+    .topMatchesGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+
+      .matchCard {
+        background: white;
+        border-radius: 10px;
+        padding: 1.25rem;
+        border: 1px solid #e0e7ff;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(99, 102, 241, 0.12);
+        }
+
+        &.rank1 {
+          border-top: 4px solid #f59e0b;
+        }
+
+        &.rank2 {
+          border-top: 4px solid #0284c7;
+        }
+
+        &.rank3 {
+          border-top: 4px solid #8b5cf6;
+        }
+
+        .matchCardTop {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.85rem;
+
+          .rankBadge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            letter-spacing: 0.3px;
+
+            &.badgeRank1 {
+              background: #fef3c7;
+              color: #92400e;
+            }
+
+            &.badgeRank2 {
+              background: #e0f2fe;
+              color: #0369a1;
+            }
+
+            &.badgeRank3 {
+              background: #ede9fe;
+              color: #6d28d9;
+            }
+          }
+
+          .scorePill {
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+          }
+        }
+
+        .matchCandidateInfo {
+          display: flex;
+          align-items: center;
+          gap: 0.85rem;
+          margin-bottom: 0.85rem;
+
+          .matchAvatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #e5e7eb;
+            flex-shrink: 0;
+          }
+
+          h4 {
+            margin: 0 0 0.15rem 0;
+            font-size: 1rem;
+            color: #111827;
+          }
+
+          .matchTitle {
+            margin: 0 0 0.15rem 0;
+            font-size: 0.82rem;
+            color: #4b5563;
+          }
+
+          .matchEmail {
+            font-size: 0.75rem;
+            color: #6b7280;
+            display: block;
+            word-break: break-all;
+          }
+        }
+
+        .matchSkills {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.35rem;
+          margin-bottom: 0.85rem;
+
+          .matchSkillChip {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 0.15rem 0.45rem;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 500;
+          }
+        }
+
+        .matchResumeLink {
+          display: block;
+          text-align: center;
+          background: #eef2ff;
+          color: #4f46e5;
+          padding: 0.45rem 0.75rem;
+          border-radius: 6px;
+          font-size: 0.82rem;
+          font-weight: 600;
+          text-decoration: none;
+          transition: background 0.15s ease;
+
+          &:hover {
+            background: #e0e7ff;
+          }
+        }
+      }
+    }
+  }
+
+  /* Main applicants list */
   .applicantsList {
     display: flex;
     flex-direction: column;
@@ -51,16 +309,59 @@
     background: white;
     border-radius: 8px;
     border: 1px solid #e0e0e0;
-    padding: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 1.5rem;
+    overflow: hidden;
     transition: all 0.2s ease;
 
     &:hover {
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    &.matchedApplicantRank1 {
+      border: 1.5px solid #f59e0b;
+    }
+
+    &.matchedApplicantRank2 {
+      border: 1.5px solid #0284c7;
+    }
+
+    &.matchedApplicantRank3 {
+      border: 1.5px solid #8b5cf6;
+    }
+
+    .cardMatchBanner {
+      padding: 0.4rem 1.25rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+
+      &.bannerRank1 {
+        background: #fef3c7;
+        color: #92400e;
+        border-bottom: 1px solid #fde68a;
+      }
+
+      &.bannerRank2 {
+        background: #e0f2fe;
+        color: #0369a1;
+        border-bottom: 1px solid #bae6fd;
+      }
+
+      &.bannerRank3 {
+        background: #ede9fe;
+        color: #6d28d9;
+        border-bottom: 1px solid #ddd6fe;
+      }
+    }
+
+    .cardMain {
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1.5rem;
     }
 
     .candidateProfile {
@@ -75,6 +376,7 @@
         border-radius: 50%;
         object-fit: cover;
         background: #f0f0f0;
+        flex-shrink: 0;
       }
 
       .details {
@@ -177,5 +479,11 @@
     p {
       font-size: 0.9rem;
     }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

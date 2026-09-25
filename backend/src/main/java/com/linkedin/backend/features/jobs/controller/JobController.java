@@ -8,7 +8,11 @@ import com.linkedin.backend.features.jobs.dto.JobResponseDto;
 import com.linkedin.backend.features.jobs.model.ApplicationStatus;
 import com.linkedin.backend.features.jobs.model.Job;
 import com.linkedin.backend.features.jobs.model.JobApplication;
+import com.linkedin.backend.features.authentication.model.Role;
+import com.linkedin.backend.features.jobs.dto.TopApplicantEvaluationDto;
+import com.linkedin.backend.features.jobs.service.JobFitService;
 import com.linkedin.backend.features.jobs.service.JobService;
+import com.linkedin.backend.features.jobs.service.NativeJobMatcherService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +20,22 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/jobs")
 public class JobController {
 
     private final JobService jobService;
+    private final JobFitService jobFitService;
+    private final NativeJobMatcherService nativeJobMatcherService;
 
-    public JobController(JobService jobService) {
+    public JobController(JobService jobService,
+                         JobFitService jobFitService,
+                         NativeJobMatcherService nativeJobMatcherService) {
         this.jobService = jobService;
+        this.jobFitService = jobFitService;
+        this.nativeJobMatcherService = nativeJobMatcherService;
     }
 
     @GetMapping
@@ -115,5 +126,24 @@ public class JobController {
             @RequestAttribute("authenticatedUser") User user) {
         jobService.updateApplicationStatus(applicationId, status, user);
         return ResponseEntity.ok(new Response("Application status updated to " + status.name() + "."));
+    }
+
+    @GetMapping("/{id}/top-applicant-evaluation")
+    public ResponseEntity<TopApplicantEvaluationDto> getTopApplicantEvaluation(
+            @PathVariable Long id,
+            @RequestAttribute("authenticatedUser") User user) {
+        if (user.getRole() != Role.ROLE_USER) {
+            return ResponseEntity.ok(null);
+        }
+        TopApplicantEvaluationDto evaluation = jobFitService.evaluateCandidateFit(id, user);
+        return ResponseEntity.ok(evaluation);
+    }
+
+    @GetMapping("/{id}/match-applicants")
+    public ResponseEntity<Map<String, Object>> getTopMatchingApplicants(
+            @PathVariable Long id,
+            @RequestAttribute("authenticatedUser") User user) {
+        Map<String, Object> results = nativeJobMatcherService.getTopMatchingApplicants(id, user);
+        return ResponseEntity.ok(results);
     }
 }

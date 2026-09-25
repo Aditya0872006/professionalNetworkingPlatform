@@ -59,3 +59,18 @@ export interface IJobFormData {
   deadline?: string;
   numberOfOpenings?: number;
 }
+
+export interface ITopApplicantEvaluation {
+  isTopApplicant: boolean;
+  matchScore: number;
+  matchPercentage: number;
+  rank?: number;
+  totalApplicants: number;
+  percentile?: number;
+  isEarlyApplicant: boolean;
+  matchedSkills: string[];
+  missingSkills: string[];
+  headlineMessage: string;
+  matchTier: "TOP_APPLICANT" | "STRONG_MATCH" | "MODERATE_MATCH" | "GROWTH_OPPORTUNITY";
+}
+

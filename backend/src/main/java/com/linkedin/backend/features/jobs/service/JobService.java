@@ -63,7 +63,7 @@ public class JobService {
         job.setRecruiter(recruiter);
         job.setTitle(dto.title());
         job.setCompany(dto.company() != null && !dto.company().isBlank() ? dto.company() : recruiter.getCompany());
-        job.setDescription(dto.description());
+        job.setDescription(dto.description().replaceAll("<[^>]*>", ""));
         job.setLocation(dto.location());
         job.setEmploymentType(dto.employmentType());
         job.setWorkMode(dto.workMode());
@@ -92,7 +92,7 @@ public class JobService {
 
         job.setTitle(dto.title());
         job.setCompany(dto.company());
-        job.setDescription(dto.description());
+        job.setDescription(dto.description().replaceAll("<[^>]*>", ""));
         job.setLocation(dto.location());
         job.setEmploymentType(dto.employmentType());
         job.setWorkMode(dto.workMode());

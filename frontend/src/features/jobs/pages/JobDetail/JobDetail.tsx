@@ -5,7 +5,7 @@ import { Loader } from "../../../../components/Loader/Loader";
 import { usePageTitle } from "../../../../hooks/usePageTitle";
 import { request } from "../../../../utils/api";
 import { useAuthentication } from "../../../authentication/contexts/AuthenticationContextProvider";
-import { IJob } from "../../types";
+import { IJob, ITopApplicantEvaluation } from "../../types";
 import classes from "./JobDetail.module.scss";
 
 export function JobDetail() {
@@ -14,7 +14,9 @@ export function JobDetail() {
   const { user } = useAuthentication();
 
   const [job, setJob] = useState<IJob | null>(null);
+  const [evaluation, setEvaluation] = useState<ITopApplicantEvaluation | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEvaluating, setIsEvaluating] = useState(false);
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,9 +37,21 @@ export function JobDetail() {
     setIsLoading(false);
   };
 
+  const fetchEvaluation = async () => {
+    if (user?.role !== "ROLE_USER") return;
+    setIsEvaluating(true);
+    await request<ITopApplicantEvaluation>({
+      endpoint: `/api/v1/jobs/${id}/top-applicant-evaluation`,
+      onSuccess: (data) => setEvaluation(data),
+      onFailure: (err) => console.warn("Applicant fit evaluation notice:", err),
+    });
+    setIsEvaluating(false);
+  };
+
   useEffect(() => {
     fetchJob();
-  }, [id]);
+    fetchEvaluation();
+  }, [id, user?.id]);
 
   const handleApplySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -173,6 +187,85 @@ export function JobDetail() {
           <div className={classes.appliedNotice} style={{ margin: "1rem 0" }}>
             ✓ {applySuccess}
           </div>
+        )}
+
+        {/* Top Applicant Evaluation Spotlight */}
+        {user?.role === "ROLE_USER" && (
+          isEvaluating ? (
+            <div className={classes.evaluatingBanner}>
+              <span className={classes.evaluatingSpinner} />
+              <span>Analyzing your profile against role requirements & applicant pool...</span>
+            </div>
+          ) : evaluation ? (
+            <div
+              className={`${classes.topApplicantCard} ${
+                evaluation.isTopApplicant ? classes.isTop : classes.isStandard
+              }`}
+            >
+              <div className={classes.cardTop}>
+                <div className={classes.badgeGroup}>
+                  {evaluation.isTopApplicant ? (
+                    <span className={classes.topApplicantBadge}>
+                      🌟 You'd be a top applicant
+                    </span>
+                  ) : evaluation.isEarlyApplicant ? (
+                    <span className={classes.earlyApplicantBadge}>
+                      ⚡ Early Applicant
+                    </span>
+                  ) : (
+                    <span className={classes.standardApplicantBadge}>
+                      📊 Profile Fit Analysis
+                    </span>
+                  )}
+
+                  {evaluation.percentile != null && evaluation.totalApplicants > 0 && (
+                    <span className={classes.rankPill}>
+                      Top {evaluation.percentile}% (Rank #{evaluation.rank || 1} of {evaluation.totalApplicants + 1})
+                    </span>
+                  )}
+                </div>
+
+                <div className={classes.scoreWrapper}>
+                  <span className={classes.scorePercentage}>
+                    {evaluation.matchPercentage}%
+                  </span>
+                  <span className={classes.scoreLabel}>Match</span>
+                </div>
+              </div>
+
+              <p className={classes.headlineMessage}>{evaluation.headlineMessage}</p>
+
+              {(evaluation.matchedSkills.length > 0 || evaluation.missingSkills.length > 0) && (
+                <div className={classes.skillsBreakdown}>
+                  <div className={classes.skillsSubtitle}>
+                    Skills compared with your profile:
+                  </div>
+                  <div className={classes.skillsChipsContainer}>
+                    {evaluation.matchedSkills.map((skill, idx) => (
+                      <span key={`matched-${idx}`} className={classes.matchedSkillChip}>
+                        ✓ {skill}
+                      </span>
+                    ))}
+                    {evaluation.missingSkills.map((skill, idx) => (
+                      <span
+                        key={`missing-${idx}`}
+                        className={classes.missingSkillChip}
+                        title="Skill requested by recruiter, not yet on your profile"
+                      >
+                        + {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className={classes.evalFooter}>
+                <span>
+                  💡 Evaluated automatically using AI from your profile Headline, About, Experience & Skills.
+                </span>
+              </div>
+            </div>
+          ) : null
         )}
 
         {/* Meta summary grid */}

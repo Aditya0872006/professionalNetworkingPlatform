@@ -176,7 +176,7 @@ public class ProfileSectionService {
                 dto.getJobTitle().trim(),
                 dto.getStartDate(),
                 dto.getEndDate(),
-                dto.getDescription() != null ? dto.getDescription().trim() : null
+                dto.getDescription() != null ? dto.getDescription().replaceAll("<[^>]*>", "").trim() : null
         );
         Experience saved = experienceRepository.save(experience);
         return new ExperienceDto(
@@ -185,7 +185,7 @@ public class ProfileSectionService {
                 saved.getJobTitle(),
                 saved.getStartDate(),
                 saved.getEndDate(),
-                saved.getDescription()
+                saved.getDescription().replaceAll("<[^>]*>", "")
         );
     }
 
@@ -199,7 +199,7 @@ public class ProfileSectionService {
         experience.setJobTitle(dto.getJobTitle().trim());
         experience.setStartDate(dto.getStartDate());
         experience.setEndDate(dto.getEndDate());
-        experience.setDescription(dto.getDescription() != null ? dto.getDescription().trim() : null);
+        experience.setDescription(dto.getDescription() != null ? dto.getDescription().replaceAll("<[^>]*>", "").trim() : null);
         Experience saved = experienceRepository.save(experience);
         return new ExperienceDto(
                 saved.getId(),
@@ -207,7 +207,7 @@ public class ProfileSectionService {
                 saved.getJobTitle(),
                 saved.getStartDate(),
                 saved.getEndDate(),
-                saved.getDescription()
+                saved.getDescription().replaceAll("<[^>]*>", "")
         );
     }
 
@@ -229,7 +229,7 @@ public class ProfileSectionService {
                 .map(p -> new ProjectDto(
                         p.getId(),
                         p.getProjectName(),
-                        p.getDescription(),
+                        p.getDescription().replaceAll("<[^>]*>", ""),
                         p.getProjectUrl()
                 ))
                 .toList();
@@ -239,14 +239,14 @@ public class ProfileSectionService {
         Project project = new Project(
                 user,
                 dto.getProjectName().trim(),
-                dto.getDescription() != null ? dto.getDescription().trim() : null,
+                dto.getDescription() != null ? dto.getDescription().replaceAll("<[^>]*>", "").trim() : null,
                 dto.getProjectUrl() != null ? dto.getProjectUrl().trim() : null
         );
         Project saved = projectRepository.save(project);
         return new ProjectDto(
                 saved.getId(),
                 saved.getProjectName(),
-                saved.getDescription(),
+                saved.getDescription().replaceAll("<[^>]*>", ""),
                 saved.getProjectUrl()
         );
     }
@@ -258,13 +258,13 @@ public class ProfileSectionService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authorized to update this project");
         }
         project.setProjectName(dto.getProjectName().trim());
-        project.setDescription(dto.getDescription() != null ? dto.getDescription().trim() : null);
+        project.setDescription(dto.getDescription() != null ? dto.getDescription().replaceAll("<[^>]*>", "").trim() : null);
         project.setProjectUrl(dto.getProjectUrl() != null ? dto.getProjectUrl().trim() : null);
         Project saved = projectRepository.save(project);
         return new ProjectDto(
                 saved.getId(),
                 saved.getProjectName(),
-                saved.getDescription(),
+                saved.getDescription().replaceAll("<[^>]*>", ""),
                 saved.getProjectUrl()
         );
     }

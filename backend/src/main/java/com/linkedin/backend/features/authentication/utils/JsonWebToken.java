@@ -25,7 +25,8 @@ import java.util.function.Function;
 @Component
 public class JsonWebToken {
     private final RestTemplate restTemplate;
-    @Value("${jwt.secret.key}")
+    @Value("${jwt.secre" +
+            "t.key}")
     private String secret;
 
     public JsonWebToken(RestTemplate restTemplate) {

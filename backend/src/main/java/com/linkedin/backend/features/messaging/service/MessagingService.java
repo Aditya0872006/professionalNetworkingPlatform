@@ -63,7 +63,7 @@ public class MessagingService {
                 });
 
         Conversation conversation = conversationRepository.save(new Conversation(sender, receiver));
-        Message message = new Message(sender, receiver, conversation, content);
+        Message message = new Message(sender, receiver, conversation, content.replaceAll("<[^>]*>", ""));
         messageRepository.save(message);
         conversation.getMessages().add(message);
         notificationService.sendConversationToUsers(sender.getId(), receiver.getId(), conversation);
@@ -85,7 +85,7 @@ public class MessagingService {
             throw new IllegalArgumentException("Receiver is not part of this conversation");
         }
 
-        Message message = new Message(sender, receiver, conversation, content);
+        Message message = new Message(sender, receiver, conversation, content.replaceAll("<[^>]*>", ""));
         messageRepository.save(message);
         conversation.getMessages().add(message);
         notificationService.sendMessageToConversation(conversation.getId(), message);

@@ -46,7 +46,7 @@ public class FeedService {
 
         String pictureUrl = storageService.saveImage(picture);
 
-        Post post = new Post(content, author);
+        Post post = new Post(content.replaceAll("<[^>]*>", ""), author);
 
         post.setPicture(pictureUrl);
         post.setLikes(new HashSet<>());
@@ -72,7 +72,7 @@ public class FeedService {
 
         String pictureUrl = storageService.saveImage(picture);
 
-        post.setContent(content);
+        post.setContent(content.replaceAll("<[^>]*>", ""));
         post.setPicture(pictureUrl);
 
         notificationService.sendEditNotificationToPost(postId, post);
@@ -110,7 +110,7 @@ public class FeedService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Comment comment = commentRepository.save(new Comment(post, user, content));
+        Comment comment = commentRepository.save(new Comment(post, user, content.replaceAll("<[^>]*>", "")));
         notificationService.sendCommentNotification(user, post.getAuthor(), post.getId());
         notificationService.sendCommentToPost(postId, comment);
         return comment;
@@ -124,7 +124,7 @@ public class FeedService {
         if (!comment.getAuthor().equals(user)) {
             throw new IllegalArgumentException("User is not the author of the comment");
         }
-        comment.setContent(newContent);
+        comment.setContent(newContent.replaceAll("<[^>]*>", ""));
         Comment savedComment = commentRepository.save(comment);
         notificationService.sendCommentToPost(savedComment.getPost().getId(), savedComment);
         return savedComment;
