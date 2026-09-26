@@ -303,7 +303,7 @@ public class JobService {
         }
     }
 
-    private JobResponseDto toResponseDto(Job job, Long currentUserId) {
+    public JobResponseDto toResponseDto(Job job, Long currentUserId) {
         long count = jobApplicationRepository.countByJobId(job.getId());
         boolean hasApplied = currentUserId != null &&
                 jobApplicationRepository.existsByJobIdAndApplicantId(job.getId(), currentUserId);

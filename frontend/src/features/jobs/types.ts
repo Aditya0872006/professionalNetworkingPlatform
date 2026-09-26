@@ -74,3 +74,28 @@ export interface ITopApplicantEvaluation {
   matchTier: "TOP_APPLICANT" | "STRONG_MATCH" | "MODERATE_MATCH" | "GROWTH_OPPORTUNITY";
 }
 
+export type RecommendationTier = "TOP_MATCH" | "STRONG_MATCH" | "GOOD_MATCH" | "EXPLORE";
+
+export interface IJobRecommendation {
+  job: IJob;
+  matchScore: number;
+  matchPercentage: number;
+  recommendationTier: RecommendationTier;
+  matchedSkills: string[];
+  missingSkills: string[];
+  candidateExperienceYears: number;
+  requiredMinExperience?: number;
+  experienceMatched: boolean;
+  educationMatched: boolean;
+  locationMatched: boolean;
+  aiReasoning: string;
+  matchHighlights: string[];
+  scoreBreakdown: {
+    skills: number;
+    experience: number;
+    profile: number;
+    education: number;
+  };
+}
+
+

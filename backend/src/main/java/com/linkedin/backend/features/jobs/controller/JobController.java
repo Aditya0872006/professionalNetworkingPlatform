@@ -12,6 +12,8 @@ import com.linkedin.backend.features.authentication.model.Role;
 import com.linkedin.backend.features.jobs.dto.TopApplicantEvaluationDto;
 import com.linkedin.backend.features.jobs.service.JobFitService;
 import com.linkedin.backend.features.jobs.service.JobService;
+import com.linkedin.backend.features.jobs.dto.JobRecommendationDto;
+import com.linkedin.backend.features.jobs.service.JobRecommendationService;
 import com.linkedin.backend.features.jobs.service.NativeJobMatcherService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -29,13 +31,16 @@ public class JobController {
     private final JobService jobService;
     private final JobFitService jobFitService;
     private final NativeJobMatcherService nativeJobMatcherService;
+    private final JobRecommendationService jobRecommendationService;
 
     public JobController(JobService jobService,
                          JobFitService jobFitService,
-                         NativeJobMatcherService nativeJobMatcherService) {
+                         NativeJobMatcherService nativeJobMatcherService,
+                         JobRecommendationService jobRecommendationService) {
         this.jobService = jobService;
         this.jobFitService = jobFitService;
         this.nativeJobMatcherService = nativeJobMatcherService;
+        this.jobRecommendationService = jobRecommendationService;
     }
 
     @GetMapping
@@ -145,5 +150,17 @@ public class JobController {
             @RequestAttribute("authenticatedUser") User user) {
         Map<String, Object> results = nativeJobMatcherService.getTopMatchingApplicants(id, user);
         return ResponseEntity.ok(results);
+    }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<List<JobRecommendationDto>> getJobRecommendations(
+            @RequestParam(value = "minScore", defaultValue = "0.0") double minScore,
+            @RequestParam(value = "limit", defaultValue = "20") int limit,
+            @RequestParam(value = "includeApplied", defaultValue = "false") boolean includeApplied,
+            @RequestAttribute("authenticatedUser") User user) {
+        List<JobRecommendationDto> recommendations = jobRecommendationService.getRecommendationsForUser(
+                user, minScore, limit, includeApplied
+        );
+        return ResponseEntity.ok(recommendations);
     }
 }

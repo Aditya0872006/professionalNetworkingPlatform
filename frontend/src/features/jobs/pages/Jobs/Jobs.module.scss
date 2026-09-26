@@ -149,13 +149,158 @@
     }
   }
 
-  .jobsList {
+  // Tabs for switching between AI Recommendations and All Opportunities
+  .tabsContainer {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #e0e0e0;
+
+    .tabButton {
+      background: none;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #666;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        color: #0a66c2;
+        background: #f7f9fa;
+      }
+
+      &.activeTab {
+        color: #0a66c2;
+        border-bottom-color: #0a66c2;
+      }
+
+      .tabCountBadge {
+        background: #e8f3ff;
+        color: #0a66c2;
+        padding: 0.15rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+    }
+  }
+
+  // AI Recommendation Profile Context Banner
+  .aiBanner {
+    background: linear-gradient(135deg, #f0f7ff 0%, #e8f4fd 100%);
+    border: 1px solid #cce5ff;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1.25rem;
     display: flex;
     flex-direction: column;
     gap: 0.85rem;
+
+    .aiBannerHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+
+      .aiBannerTitle {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+
+        .aiSparkleIcon {
+          font-size: 1.3rem;
+          background: #0a66c2;
+          color: white;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        h2 {
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #0a66c2;
+          margin: 0;
+        }
+      }
+
+      .refreshBtn {
+        background: white;
+        border: 1px solid #0a66c2;
+        color: #0a66c2;
+        border-radius: 6px;
+        padding: 0.35rem 0.75rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+
+        &:hover {
+          background: #e8f4fd;
+        }
+      }
+    }
+
+    .aiBannerDesc {
+      font-size: 0.85rem;
+      color: #334e68;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .aiFilterChips {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      padding-top: 0.25rem;
+
+      .chip {
+        background: white;
+        border: 1px solid #c2dbf7;
+        color: #486581;
+        padding: 0.3rem 0.75rem;
+        border-radius: 16px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover {
+          border-color: #0a66c2;
+          color: #0a66c2;
+        }
+
+        &.activeChip {
+          background: #0a66c2;
+          border-color: #0a66c2;
+          color: white;
+        }
+      }
+    }
   }
 
-  .jobCard {
+  .jobsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  // Job Card & Recommended Card
+  .jobCard,
+  .recommendedCard {
     background: white;
     border-radius: 8px;
     border: 1px solid #e0e0e0;
@@ -167,95 +312,253 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       border-color: #0a66c2;
     }
+  }
 
-    .cardHeader {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 0.5rem;
+  .recommendedCard {
+    border-left: 4px solid #0a66c2;
 
-      .jobTitle {
-        font-size: 1.15rem;
-        font-weight: 600;
-        color: #0a66c2;
-        margin: 0 0 0.25rem 0;
+    &.topMatchBorder {
+      border-left: 4px solid #2e7d32;
+    }
 
-        &:hover {
-          text-decoration: underline;
-        }
-      }
+    &.strongMatchBorder {
+      border-left: 4px solid #0a66c2;
+    }
 
-      .companyName {
-        font-size: 0.95rem;
-        font-weight: 500;
-        color: #333;
-        margin: 0;
-      }
+    &.goodMatchBorder {
+      border-left: 4px solid #7b1fa2;
+    }
+  }
 
-      .badges {
-        display: flex;
-        gap: 0.4rem;
-        flex-wrap: wrap;
+  .cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+
+    .jobTitle {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #0a66c2;
+      margin: 0 0 0.25rem 0;
+
+      &:hover {
+        text-decoration: underline;
       }
     }
 
-    .cardMeta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      font-size: 0.85rem;
-      color: #666;
-      margin: 0.6rem 0;
-
-      span {
-        display: flex;
-        align-items: center;
-        gap: 0.3rem;
-      }
+    .companyName {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #333;
+      margin: 0;
     }
 
-    .skillsRow {
+    .badges {
       display: flex;
-      flex-wrap: wrap;
       gap: 0.4rem;
-      margin: 0.6rem 0;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+  }
 
-      .skillChip {
-        background: #f3f2ef;
-        color: #444;
-        padding: 0.2rem 0.6rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 500;
-      }
+  // AI Match Score Badge in Card Header
+  .matchScoreBadge {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+    &.matchScoreTop {
+      background: #e8f5e9;
+      color: #1b5e20;
+      border: 1px solid #a5d6a7;
     }
 
-    .cardFooter {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 0.85rem;
-      padding-top: 0.75rem;
-      border-top: 1px solid #f0f0f0;
-      font-size: 0.8rem;
-      color: #777;
+    &.matchScoreStrong {
+      background: #e3f2fd;
+      color: #0d47a1;
+      border: 1px solid #90caf9;
+    }
 
-      .applicantsCount {
-        font-weight: 500;
+    &.matchScoreGood {
+      background: #f3e5f5;
+      color: #4a148c;
+      border: 1px solid #ce93d8;
+    }
+
+    &.matchScoreExplore {
+      background: #fff8e1;
+      color: #e65100;
+      border: 1px solid #ffe082;
+    }
+
+    .scoreTierPill {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.1rem 0.4rem;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+    }
+  }
+
+  .cardMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0.6rem 0;
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+  }
+
+  // AI Reasoning Snippet Box
+  .aiInsightBox {
+    background: #f8fbfe;
+    border: 1px solid #e1eef9;
+    border-radius: 6px;
+    padding: 0.75rem 0.9rem;
+    margin: 0.75rem 0;
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+
+    .aiInsightIcon {
+      font-size: 1rem;
+      color: #0a66c2;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .aiInsightContent {
+      font-size: 0.82rem;
+      color: #243b53;
+      line-height: 1.4;
+
+      strong {
         color: #0a66c2;
       }
+    }
+  }
 
-      .appliedTag {
-        color: #2e7d32;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-      }
+  // Highlights list
+  .matchHighlightsList {
+    margin: 0.5rem 0;
+    padding-left: 1.2rem;
+    font-size: 0.8rem;
+    color: #334e68;
 
-      .expiredTag {
-        color: #c62828;
-        font-weight: 600;
+    li {
+      margin-bottom: 0.25rem;
+    }
+  }
+
+  // Skills Row with Matched / Missing status
+  .skillsRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.6rem 0;
+
+    .skillChip {
+      background: #f3f2ef;
+      color: #444;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .matchedSkillChip {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #c8e6c9;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .missingSkillChip {
+      background: #fafafa;
+      color: #777;
+      border: 1px dashed #ccc;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+  }
+
+  .cardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.85rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f0f0f0;
+    font-size: 0.8rem;
+    color: #777;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    .footerLeft {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .footerRight {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .applicantsCount {
+      font-weight: 500;
+      color: #0a66c2;
+    }
+
+    .appliedTag {
+      color: #2e7d32;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .expiredTag {
+      color: #c62828;
+      font-weight: 600;
+    }
+
+    .breakdownBtn {
+      background: none;
+      border: 1px solid #0a66c2;
+      color: #0a66c2;
+      padding: 0.3rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+
+      &:hover {
+        background: #f0f7ff;
       }
     }
   }
@@ -304,6 +607,11 @@
     text-align: center;
     color: #666;
 
+    .emptyIcon {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+    }
+
     h3 {
       font-size: 1.15rem;
       color: #333;
@@ -311,7 +619,219 @@
     }
     p {
       font-size: 0.9rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.25rem;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.4;
     }
+  }
+}
+
+// Modal for AI Score Breakdown
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+
+  .modalHeader {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .modalTitle {
+      h3 {
+        margin: 0 0 0.25rem 0;
+        font-size: 1.2rem;
+        color: #191919;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #666;
+      }
+    }
+
+    .closeBtn {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      color: #888;
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+
+      &:hover {
+        background: #f0f0f0;
+        color: #333;
+      }
+    }
+  }
+
+  .modalBody {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    .overallScoreCard {
+      background: linear-gradient(135deg, #f0f7ff 0%, #e8f4fd 100%);
+      border: 1px solid #cce5ff;
+      border-radius: 8px;
+      padding: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+
+      .scoreCircle {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: #0a66c2;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 4px 10px rgba(10, 102, 194, 0.3);
+
+        .scoreNum {
+          font-size: 1.4rem;
+          font-weight: 800;
+          line-height: 1;
+        }
+
+        .scoreText {
+          font-size: 0.65rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+
+      .scoreDetails {
+        h4 {
+          margin: 0 0 0.25rem 0;
+          font-size: 1.05rem;
+          color: #0a66c2;
+        }
+        p {
+          margin: 0;
+          font-size: 0.85rem;
+          color: #334e68;
+          line-height: 1.4;
+        }
+      }
+    }
+
+    .modalSectionTitle {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #333;
+      margin: 0 0 0.6rem 0;
+    }
+
+    .progressBarsContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+
+      .progressRow {
+        .progressHeader {
+          display: flex;
+          justify-content: space-between;
+          font-size: 0.82rem;
+          margin-bottom: 0.3rem;
+
+          .labelName {
+            font-weight: 600;
+            color: #444;
+          }
+          .labelWeight {
+            font-size: 0.75rem;
+            color: #888;
+            margin-left: 0.4rem;
+          }
+          .percentageVal {
+            font-weight: 700;
+            color: #0a66c2;
+          }
+        }
+
+        .progressBarBg {
+          height: 8px;
+          background: #e9ecef;
+          border-radius: 4px;
+          overflow: hidden;
+
+          .progressBarFill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease-in-out;
+
+            &.fillSkills {
+              background: #0a66c2;
+            }
+            &.fillExp {
+              background: #2e7d32;
+            }
+            &.fillProfile {
+              background: #7b1fa2;
+            }
+            &.fillEdu {
+              background: #ef6c00;
+            }
+          }
+        }
+      }
+    }
+
+    .breakdownHighlights {
+      background: #fbfbfb;
+      border: 1px solid #ebebeb;
+      border-radius: 8px;
+      padding: 1rem;
+
+      ul {
+        margin: 0;
+        padding-left: 1.2rem;
+        font-size: 0.82rem;
+        color: #444;
+
+        li {
+          margin-bottom: 0.35rem;
+        }
+      }
+    }
+  }
+
+  .modalFooter {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
   }
 }

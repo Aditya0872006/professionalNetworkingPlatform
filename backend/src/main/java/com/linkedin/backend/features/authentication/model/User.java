@@ -219,6 +219,10 @@ public class User {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void updateProfileCompletionStatus() {
         this.profileComplete = (this.firstName != null && this.lastName != null && this.company != null
                 && this.position != null && this.location != null);
