@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <!-- Deep corporate blue gradient background -->
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0A66C2"/>
+      <stop offset="100%" stop-color="#003466"/>
+    </linearGradient>
+    
+    <!-- Bright gradient for the first network ring -->
+    <linearGradient id="ring1" x1="120" y1="120" x2="330" y2="330" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E0F0FF"/>
+    </linearGradient>
+    
+    <!-- Accent gradient for the second network ring -->
+    <linearGradient id="ring2" x1="182" y1="182" x2="392" y2="392" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#66B2FF"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Smooth app icon base -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  
+  <!-- Interlocking connection rings -->
+  <circle cx="216" cy="256" r="96" fill="none" stroke="url(#ring1)" stroke-width="44"/>
+  <circle cx="296" cy="256" r="96" fill="none" stroke="url(#ring2)" stroke-width="44" opacity="0.95"/>
+  
+  <!-- Central platform node -->
+  <circle cx="256" cy="256" r="28" fill="#FFFFFF"/>
+</svg>

@@ -75,7 +75,7 @@ export function LeftSidebar({ user }: ILeftSidebarProps) {
           <div className={classes.value}>0</div>
         </div> */}
         <button className={classes.item} onClick={() => navigate("/network/connections")}>
-          <span className={classes.label}>Connexions</span>
+          <span className={classes.label}>Connections</span>
           <span className={classes.value}>
             {connections.filter((connection) => connection.status === "ACCEPTED").length}
           </span>

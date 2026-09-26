@@ -349,7 +349,7 @@ export function Header() {
                     {nonReadNotificationCount > 0 ? (
                       <span className={classes.badge}>{nonReadNotificationCount}</span>
                     ) : null}
-                    <span>Notications</span>
+                    <span>Notifications</span>
                   </div>
                 </NavLink>
               </li>

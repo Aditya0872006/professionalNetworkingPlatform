@@ -124,7 +124,7 @@ export function Signup() {
               type="button"
               onClick={() => navigate("/authentication/login")}
             >
-              Go to Sign in
+              I understand
             </Button>
           </div>
         </Box>
@@ -287,7 +287,7 @@ export function Signup() {
           </div>
 
           <p className={classes.disclaimer}>
-            By clicking Agree & Join or Continue, you agree to LinkedIn's{" "}
+            By clicking Agree & Join or Continue, you agree to platform's{" "}
             <a href="#terms">User Agreement</a>, <a href="#privacy">Privacy Policy</a>, and{" "}
             <a href="#cookies">Cookie Policy</a>.
           </p>
@@ -316,7 +316,7 @@ export function Signup() {
         )}
 
         <div className={classes.register}>
-          Already on LinkedIn? <Link to="/authentication/login">Sign in</Link>
+          Already registered? <Link to="/authentication/login">Sign in</Link>
         </div>
       </Box>
     </div>

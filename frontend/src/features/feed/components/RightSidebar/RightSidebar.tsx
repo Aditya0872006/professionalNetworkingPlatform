@@ -28,7 +28,7 @@ export function RightSidebar() {
 
   return (
     <div className={classes.root}>
-      <h3>Add to your connexions</h3>
+      <h3>Add to your connections</h3>
       <div className={classes.items}>
         {suggestions.map((suggestion) => {
           return (
