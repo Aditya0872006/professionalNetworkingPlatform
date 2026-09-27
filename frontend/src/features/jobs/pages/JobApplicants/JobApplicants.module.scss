@@ -6,7 +6,7 @@
   .header {
     background: white;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #c8dedd;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     display: flex;
@@ -16,7 +16,7 @@
     gap: 1rem;
 
     .backLink {
-      color: #0a66c2;
+      color: #1a7a6e;
       font-weight: 600;
       font-size: 0.9rem;
       cursor: pointer;
@@ -50,7 +50,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        background: linear-gradient(135deg, #1a7a6e 0%, #0f5a51 100%);
         color: white;
         border: none;
         border-radius: 24px;
@@ -58,13 +58,13 @@
         font-size: 0.9rem;
         font-weight: 600;
         cursor: pointer;
-        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+        box-shadow: 0 4px 12px rgba(26, 122, 110, 0.25);
         transition: all 0.2s ease;
 
         &:hover:not(:disabled) {
           transform: translateY(-1px);
-          box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
-          background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+          box-shadow: 0 6px 16px rgba(26, 122, 110, 0.35);
+          background: linear-gradient(135deg, #0f5a51 0%, #0a423a 100%);
         }
 
         &:disabled {
@@ -109,12 +109,12 @@
 
   /* Top 3 AI Matches Spotlight Section */
   .topMatchesSection {
-    background: linear-gradient(180deg, #f8faff 0%, #f0f4ff 100%);
-    border: 1.5px solid #c7d2fe;
+    background: linear-gradient(180deg, #f0faf9 0%, #e0f4f2 100%);
+    border: 1.5px solid #b2d8d4;
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 2rem;
-    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
+    box-shadow: 0 4px 20px rgba(26, 122, 110, 0.08);
 
     .topMatchesHeader {
       display: flex;
@@ -139,8 +139,8 @@
 
       .sortToggleBtn {
         background: white;
-        color: #4f46e5;
-        border: 1.5px solid #c7d2fe;
+        color: #1a7a6e;
+        border: 1.5px solid #b2d8d4;
         border-radius: 20px;
         padding: 0.45rem 1rem;
         font-size: 0.85rem;
@@ -149,8 +149,8 @@
         transition: all 0.2s ease;
 
         &:hover {
-          background: #eef2ff;
-          border-color: #4f46e5;
+          background: #eaf6f5;
+          border-color: #1a7a6e;
         }
       }
     }
@@ -164,7 +164,7 @@
         background: white;
         border-radius: 10px;
         padding: 1.25rem;
-        border: 1px solid #e0e7ff;
+        border: 1px solid #c8dedd;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -173,7 +173,7 @@
 
         &:hover {
           transform: translateY(-2px);
-          box-shadow: 0 6px 16px rgba(99, 102, 241, 0.12);
+          box-shadow: 0 6px 16px rgba(26, 122, 110, 0.12);
         }
 
         &.rank1 {
@@ -269,7 +269,7 @@
           margin-bottom: 0.85rem;
 
           .matchSkillChip {
-            background: #f3f4f6;
+            background: #f0f8f7;
             color: #374151;
             padding: 0.15rem 0.45rem;
             border-radius: 6px;
@@ -281,8 +281,8 @@
         .matchResumeLink {
           display: block;
           text-align: center;
-          background: #eef2ff;
-          color: #4f46e5;
+          background: #eaf6f5;
+          color: #1a7a6e;
           padding: 0.45rem 0.75rem;
           border-radius: 6px;
           font-size: 0.82rem;
@@ -291,7 +291,7 @@
           transition: background 0.15s ease;
 
           &:hover {
-            background: #e0e7ff;
+            background: #d4ecea;
           }
         }
       }
@@ -308,7 +308,7 @@
   .applicantCard {
     background: white;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #c8dedd;
     overflow: hidden;
     transition: all 0.2s ease;
 
@@ -408,7 +408,7 @@
           margin-top: 0.5rem;
 
           .skillChip {
-            background: #f3f2ef;
+            background: #f0f8f7;
             color: #555;
             padding: 0.15rem 0.5rem;
             border-radius: 10px;
@@ -434,7 +434,7 @@
         background: white;
 
         &:focus {
-          border-color: #0a66c2;
+          border-color: #1a7a6e;
           outline: none;
         }
       }
@@ -444,15 +444,15 @@
         align-items: center;
         gap: 0.35rem;
         padding: 0.4rem 0.8rem;
-        background: #eef3f8;
-        color: #0a66c2;
+        background: #eaf6f5;
+        color: #1a7a6e;
         border-radius: 4px;
         font-size: 0.85rem;
         font-weight: 600;
         text-decoration: none;
 
         &:hover {
-          background: #d0e4f7;
+          background: #d4ecea;
         }
       }
 
@@ -466,7 +466,7 @@
   .emptyState {
     background: white;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #c8dedd;
     padding: 3rem 1.5rem;
     text-align: center;
     color: #666;
@@ -487,3 +487,4 @@
     transform: rotate(360deg);
   }
 }
+

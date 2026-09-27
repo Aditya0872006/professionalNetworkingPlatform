@@ -10,7 +10,7 @@
   gap: 0.5rem;
   background: transparent;
   border: none;
-  color: #0a66c2;
+  color: #1a7a6e;
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
@@ -25,7 +25,7 @@
 .card {
   background: white;
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #c8dedd;
   padding: 2rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 
@@ -36,7 +36,7 @@
     flex-wrap: wrap;
     gap: 1rem;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #d4ecea;
 
     .titleSection {
       h1 {
@@ -80,9 +80,9 @@
     }
 
     &.active {
-      background: #e3f2fd;
-      border: 1px solid #bbdefb;
-      color: #1565c0;
+      background: #e0f4f2;
+      border: 1px solid #b2d8d4;
+      color: #1a7a6e;
     }
   }
 
@@ -139,8 +139,8 @@
     margin-top: 0.75rem;
 
     .skillTag {
-      background: #eef3f8;
-      color: #0a66c2;
+      background: #eaf6f5;
+      color: #1a7a6e;
       padding: 0.4rem 0.85rem;
       border-radius: 16px;
       font-size: 0.85rem;
@@ -181,7 +181,7 @@
       }
 
       .fileUploadArea {
-        border: 2px dashed #0a66c2;
+        border: 2px dashed #1a7a6e;
         border-radius: 6px;
         padding: 1.5rem;
         text-align: center;
@@ -195,7 +195,7 @@
 
         .uploadPrompt {
           font-size: 0.9rem;
-          color: #0a66c2;
+          color: #1a7a6e;
           font-weight: 500;
         }
 
@@ -251,7 +251,7 @@
       width: 16px;
       height: 16px;
       border: 2px solid #cbd5e1;
-      border-top-color: #6366f1;
+      border-top-color: #1a7a6e;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
@@ -271,9 +271,9 @@
     }
 
     &.isStandard {
-      background: linear-gradient(135deg, #f8faff 0%, #eef2ff 45%, #ffffff 100%);
-      border: 1.5px solid #c7d2fe;
-      box-shadow: 0 4px 18px rgba(99, 102, 241, 0.08);
+      background: linear-gradient(135deg, #f0faf9 0%, #e0f4f2 45%, #ffffff 100%);
+      border: 1.5px solid #b2d8d4;
+      box-shadow: 0 4px 18px rgba(26, 122, 110, 0.08);
     }
 
     .cardTop {
@@ -308,7 +308,7 @@
           display: inline-flex;
           align-items: center;
           gap: 0.35rem;
-          background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+          background: linear-gradient(135deg, #1a7a6e 0%, #0f5a51 100%);
           color: white;
           font-weight: 700;
           font-size: 0.82rem;
@@ -321,8 +321,8 @@
           display: inline-flex;
           align-items: center;
           gap: 0.35rem;
-          background: #e0e7ff;
-          color: #3730a3;
+          background: #eaf6f5;
+          color: #0f5a51;
           font-weight: 700;
           font-size: 0.82rem;
           padding: 0.3rem 0.75rem;
@@ -419,4 +419,6 @@
     transform: rotate(360deg);
   }
 }
+
+
 

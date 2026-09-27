@@ -494,7 +494,7 @@ export function Jobs() {
                                 navigate(`/jobs/${job.id}`);
                               }}
                             >
-                              View & Apply
+                              View
                             </Button>
                           )}
                         </div>
@@ -589,7 +589,7 @@ export function Jobs() {
                             navigate(`/jobs/${job.id}`);
                           }}
                         >
-                          View & Apply
+                          View
                         </Button>
                       )}
                     </div>

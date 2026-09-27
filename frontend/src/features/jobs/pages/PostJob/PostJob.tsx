@@ -106,6 +106,7 @@ export function PostJob() {
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
                 required
+                disabled
               />
             </div>
             <div className={classes.formGroup}>
