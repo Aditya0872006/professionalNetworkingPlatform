@@ -4,13 +4,6 @@ import classes from "./AuthenticationLayout.module.scss";
 export function AuthenticationLayout() {
   return (
     <div className={classes.root}>
-      <header>
-        <div className={classes.container}>
-          <a href="/">
-            <img src="/logo.svg" alt="" className={classes.logo} />
-          </a>
-        </div>
-      </header>
       <main className={classes.container}>
         <Outlet />
       </main>
@@ -52,3 +45,4 @@ export function AuthenticationLayout() {
     </div>
   );
 }
+
