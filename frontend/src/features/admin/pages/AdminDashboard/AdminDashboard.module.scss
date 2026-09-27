@@ -12,7 +12,7 @@
     .statCard {
       background: white;
       border-radius: 8px;
-      border: 1px solid #e0e0e0;
+      border: 1px solid #c8dedd;
       padding: 1.5rem;
       display: flex;
       align-items: center;
@@ -34,8 +34,8 @@
         font-size: 1.5rem;
 
         &.blue {
-          background: #e3f2fd;
-          color: #1565c0;
+          background: #eaf6f5;
+          color: #1a7a6e;
         }
         &.amber {
           background: #fff8e1;
@@ -79,7 +79,7 @@
   .quickActionsSection {
     background: white;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #c8dedd;
     padding: 1.5rem;
 
     h2 {
@@ -94,7 +94,7 @@
       gap: 1rem;
 
       .actionCard {
-        border: 1px solid #e0e0e0;
+        border: 1px solid #c8dedd;
         border-radius: 6px;
         padding: 1.25rem;
         cursor: pointer;
@@ -103,14 +103,14 @@
         color: inherit;
 
         &:hover {
-          border-color: #0a66c2;
-          background: #f8fbff;
+          border-color: #1a7a6e;
+          background: #eaf6f5;
         }
 
         h3 {
           font-size: 1rem;
           margin: 0 0 0.35rem 0;
-          color: #0a66c2;
+          color: #1a7a6e;
         }
 
         p {
@@ -122,3 +122,4 @@
     }
   }
 }
+

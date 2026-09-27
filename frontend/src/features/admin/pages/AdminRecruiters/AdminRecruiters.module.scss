@@ -6,7 +6,7 @@
   .controlsCard {
     background: white;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #c8dedd;
     padding: 1.25rem;
     margin-bottom: 1.5rem;
     display: flex;
@@ -32,6 +32,12 @@
         border: 1px solid #ccc;
         font-size: 0.85rem;
         background: white;
+
+        &:focus {
+          outline: none;
+          border-color: #1a7a6e;
+          box-shadow: 0 0 0 1px #1a7a6e;
+        }
       }
     }
   }
@@ -45,7 +51,7 @@
   .recruiterCard {
     background: white;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #c8dedd;
     padding: 1.5rem;
     display: flex;
     justify-content: space-between;
@@ -71,7 +77,7 @@
       .recruiterName {
         font-size: 0.95rem;
         font-weight: 500;
-        color: #0a66c2;
+        color: #1a7a6e;
         margin-bottom: 0.5rem;
       }
 
@@ -84,7 +90,7 @@
         margin-bottom: 0.6rem;
 
         a {
-          color: #0a66c2;
+          color: #1a7a6e;
           text-decoration: none;
           &:hover {
             text-decoration: underline;
@@ -96,7 +102,7 @@
         font-size: 0.85rem;
         color: #555;
         line-height: 1.5;
-        background: #f9f9f9;
+        background: #f0f8f7;
         padding: 0.6rem 0.85rem;
         border-radius: 4px;
         margin-top: 0.5rem;
@@ -180,7 +186,7 @@
   .emptyState {
     background: white;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #c8dedd;
     padding: 3rem 1.5rem;
     text-align: center;
     color: #666;
@@ -195,3 +201,4 @@
     }
   }
 }
+

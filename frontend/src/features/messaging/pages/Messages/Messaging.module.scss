@@ -9,7 +9,7 @@
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #c8dedd;
 
     button.new {
       background-color: #f5f5f5;
@@ -21,7 +21,7 @@
       place-items: center;
 
       &:hover {
-        background-color: #e0e0e0;
+        background-color: #eaf6f5; color: #1a7a6e;
       }
     }
   }
@@ -30,7 +30,7 @@
     height: 100%;
     background-color: white;
     border-radius: 0.3rem;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #c8dedd;
   }
 
   .adds {
@@ -43,7 +43,7 @@
       grid-template-columns: 16rem 1fr;
 
       .sidebar {
-        border-right: 1px solid #e0e0e0;
+        border-right: 1px solid #c8dedd;
       }
     }
   }
@@ -57,3 +57,4 @@
     }
   }
 }
+

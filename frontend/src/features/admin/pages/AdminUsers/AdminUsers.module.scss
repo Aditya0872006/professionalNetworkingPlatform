@@ -6,7 +6,7 @@
   .controlsCard {
     background: white;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #c8dedd;
     padding: 1.25rem;
     margin-bottom: 1.5rem;
     display: flex;
@@ -37,6 +37,12 @@
           border: 1px solid #ccc;
           font-size: 0.85rem;
           background: white;
+
+          &:focus {
+            outline: none;
+            border-color: #1a7a6e;
+            box-shadow: 0 0 0 1px #1a7a6e;
+          }
         }
       }
     }
@@ -45,7 +51,7 @@
   .usersTableWrapper {
     background: white;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #c8dedd;
     overflow-x: auto;
   }
 
@@ -60,12 +66,12 @@
       text-align: left;
       font-weight: 600;
       color: #555;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid #c8dedd;
     }
 
     td {
       padding: 0.85rem 1rem;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid #d4ecea;
       vertical-align: middle;
     }
 
@@ -105,8 +111,8 @@
     font-weight: 600;
 
     &.admin {
-      background: #e7f3fe;
-      color: #0a66c2;
+      background: #eaf6f5;
+      color: #1a7a6e;
     }
     &.recruiter {
       background: #fef3c7;
@@ -159,3 +165,5 @@
     }
   }
 }
+
+

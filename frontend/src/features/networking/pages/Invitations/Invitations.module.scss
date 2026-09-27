@@ -1,14 +1,14 @@
 .connections {
   background-color: white;
   border-radius: 0.3rem;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #c8dedd;
   padding: 1rem;
 
   .header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #c8dedd;
     padding-bottom: 0.5rem;
     margin-bottom: 0.5rem;
 
@@ -25,3 +25,4 @@
     }
   }
 }
+
