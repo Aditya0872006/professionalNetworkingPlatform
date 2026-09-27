@@ -53,8 +53,9 @@
         background: white;
 
         &:focus {
-          border-color: #0a66c2;
+          border-color: #1a7a6e;
           outline: none;
+          box-shadow: 0 0 0 2px rgb(26 122 110 / 12%);
         }
       }
     }
@@ -62,8 +63,8 @@
     .clearBtn {
       width: 100%;
       padding: 0.4rem;
-      border: 1px solid #0a66c2;
-      color: #0a66c2;
+      border: 1px solid #1a7a6e;
+      color: #1a7a6e;
       background: transparent;
       border-radius: 4px;
       font-weight: 600;
@@ -71,7 +72,7 @@
       cursor: pointer;
 
       &:hover {
-        background: #f0f7ff;
+        background: #eaf6f5;
       }
     }
   }
@@ -79,7 +80,7 @@
   .navCard {
     background: white;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #c8dedd;
     padding: 1rem;
     margin-top: 1rem;
 
@@ -101,7 +102,7 @@
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          color: #0a66c2;
+          color: #1a7a6e;
           font-weight: 600;
           font-size: 0.85rem;
           text-decoration: none;
@@ -154,7 +155,7 @@
     display: flex;
     gap: 0.5rem;
     margin-bottom: 1rem;
-    border-bottom: 2px solid #e0e0e0;
+    border-bottom: 2px solid #d4ecea;
 
     .tabButton {
       background: none;
@@ -172,18 +173,18 @@
       transition: all 0.2s ease;
 
       &:hover {
-        color: #0a66c2;
-        background: #f7f9fa;
+        color: #1a7a6e;
+        background: #eaf6f5;
       }
 
       &.activeTab {
-        color: #0a66c2;
-        border-bottom-color: #0a66c2;
+        color: #1a7a6e;
+        border-bottom-color: #1a7a6e;
       }
 
       .tabCountBadge {
-        background: #e8f3ff;
-        color: #0a66c2;
+        background: #e0f4f2;
+        color: #1a7a6e;
         padding: 0.15rem 0.5rem;
         border-radius: 12px;
         font-size: 0.75rem;
@@ -194,8 +195,8 @@
 
   // AI Recommendation Profile Context Banner
   .aiBanner {
-    background: linear-gradient(135deg, #f0f7ff 0%, #e8f4fd 100%);
-    border: 1px solid #cce5ff;
+    background: linear-gradient(135deg, #eaf6f5 0%, #e0f4f2 100%);
+    border: 1px solid #b2d8d4;
     border-radius: 8px;
     padding: 1.2rem;
     margin-bottom: 1.25rem;
@@ -217,7 +218,7 @@
 
         .aiSparkleIcon {
           font-size: 1.3rem;
-          background: #0a66c2;
+          background: #1a7a6e;
           color: white;
           width: 32px;
           height: 32px;
@@ -230,15 +231,15 @@
         h2 {
           font-size: 1.1rem;
           font-weight: 700;
-          color: #0a66c2;
+          color: #1a7a6e;
           margin: 0;
         }
       }
 
       .refreshBtn {
         background: white;
-        border: 1px solid #0a66c2;
-        color: #0a66c2;
+        border: 1px solid #1a7a6e;
+        color: #1a7a6e;
         border-radius: 6px;
         padding: 0.35rem 0.75rem;
         font-size: 0.8rem;
@@ -249,7 +250,7 @@
         gap: 0.4rem;
 
         &:hover {
-          background: #e8f4fd;
+          background: #eaf6f5;
         }
       }
     }
@@ -269,7 +270,7 @@
 
       .chip {
         background: white;
-        border: 1px solid #c2dbf7;
+        border: 1px solid #b2d8d4;
         color: #486581;
         padding: 0.3rem 0.75rem;
         border-radius: 16px;
@@ -279,13 +280,13 @@
         transition: all 0.15s ease;
 
         &:hover {
-          border-color: #0a66c2;
-          color: #0a66c2;
+          border-color: #1a7a6e;
+          color: #1a7a6e;
         }
 
         &.activeChip {
-          background: #0a66c2;
-          border-color: #0a66c2;
+          background: #1a7a6e;
+          border-color: #1a7a6e;
           color: white;
         }
       }
@@ -303,26 +304,26 @@
   .recommendedCard {
     background: white;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #c8dedd;
     padding: 1.25rem;
     transition: all 0.2s ease;
     cursor: pointer;
 
     &:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      border-color: #0a66c2;
+      box-shadow: 0 4px 12px rgb(26 122 110 / 12%);
+      border-color: #1a7a6e;
     }
   }
 
   .recommendedCard {
-    border-left: 4px solid #0a66c2;
+    border-left: 4px solid #1a7a6e;
 
     &.topMatchBorder {
       border-left: 4px solid #2e7d32;
     }
 
     &.strongMatchBorder {
-      border-left: 4px solid #0a66c2;
+      border-left: 4px solid #1a7a6e;
     }
 
     &.goodMatchBorder {
@@ -339,7 +340,7 @@
     .jobTitle {
       font-size: 1.15rem;
       font-weight: 600;
-      color: #0a66c2;
+      color: #1a7a6e;
       margin: 0 0 0.25rem 0;
 
       &:hover {
@@ -423,8 +424,8 @@
 
   // AI Reasoning Snippet Box
   .aiInsightBox {
-    background: #f8fbfe;
-    border: 1px solid #e1eef9;
+    background: #f0faf9;
+    border: 1px solid #c8dedd;
     border-radius: 6px;
     padding: 0.75rem 0.9rem;
     margin: 0.75rem 0;
@@ -434,7 +435,7 @@
 
     .aiInsightIcon {
       font-size: 1rem;
-      color: #0a66c2;
+      color: #1a7a6e;
       flex-shrink: 0;
       margin-top: 1px;
     }
@@ -445,7 +446,7 @@
       line-height: 1.4;
 
       strong {
-        color: #0a66c2;
+        color: #1a7a6e;
       }
     }
   }
@@ -470,7 +471,7 @@
     margin: 0.6rem 0;
 
     .skillChip {
-      background: #f3f2ef;
+      background: #f0f8f7;
       color: #444;
       padding: 0.2rem 0.6rem;
       border-radius: 12px;
@@ -508,7 +509,7 @@
     align-items: center;
     margin-top: 0.85rem;
     padding-top: 0.75rem;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid #d4ecea;
     font-size: 0.8rem;
     color: #777;
     flex-wrap: wrap;
@@ -528,7 +529,7 @@
 
     .applicantsCount {
       font-weight: 500;
-      color: #0a66c2;
+      color: #1a7a6e;
     }
 
     .appliedTag {
@@ -546,8 +547,8 @@
 
     .breakdownBtn {
       background: none;
-      border: 1px solid #0a66c2;
-      color: #0a66c2;
+      border: 1px solid #1a7a6e;
+      color: #1a7a6e;
       padding: 0.3rem 0.75rem;
       border-radius: 4px;
       font-size: 0.8rem;
@@ -558,7 +559,7 @@
       gap: 0.35rem;
 
       &:hover {
-        background: #f0f7ff;
+        background: #eaf6f5;
       }
     }
   }
@@ -697,8 +698,8 @@
     gap: 1.25rem;
 
     .overallScoreCard {
-      background: linear-gradient(135deg, #f0f7ff 0%, #e8f4fd 100%);
-      border: 1px solid #cce5ff;
+      background: linear-gradient(135deg, #eaf6f5 0%, #e0f4f2 100%);
+      border: 1px solid #b2d8d4;
       border-radius: 8px;
       padding: 1.2rem;
       display: flex;
@@ -709,14 +710,14 @@
         width: 76px;
         height: 76px;
         border-radius: 50%;
-        background: #0a66c2;
+        background: #1a7a6e;
         color: white;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        box-shadow: 0 4px 10px rgba(10, 102, 194, 0.3);
+        box-shadow: 0 4px 10px rgb(26 122 110 / 30%);
 
         .scoreNum {
           font-size: 1.4rem;
@@ -735,7 +736,7 @@
         h4 {
           margin: 0 0 0.25rem 0;
           font-size: 1.05rem;
-          color: #0a66c2;
+          color: #1a7a6e;
         }
         p {
           margin: 0;
@@ -776,7 +777,7 @@
           }
           .percentageVal {
             font-weight: 700;
-            color: #0a66c2;
+            color: #1a7a6e;
           }
         }
 
@@ -792,7 +793,7 @@
             transition: width 0.5s ease-in-out;
 
             &.fillSkills {
-              background: #0a66c2;
+              background: #1a7a6e;
             }
             &.fillExp {
               background: #2e7d32;

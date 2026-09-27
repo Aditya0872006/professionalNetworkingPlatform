@@ -2,8 +2,8 @@
   text-align: center;
   padding: 1rem;
   background-color: white;
-  border-radius: 0.3rem;
-  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  border: 1px solid #c8dedd;
 
   .cover {
     height: 7rem;
@@ -23,7 +23,7 @@
     margin-inline: auto;
     border-radius: 50%;
     overflow: hidden;
-    border: 2px solid black;
+    border: 2px solid var(--primary-color);
     position: relative;
     z-index: 2;
 
@@ -39,9 +39,10 @@
   }
 
   .title {
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #d4ecea;
     padding-bottom: 0.5rem;
     font-size: 0.9rem;
+    color: var(--primary-color);
   }
 
   .info {

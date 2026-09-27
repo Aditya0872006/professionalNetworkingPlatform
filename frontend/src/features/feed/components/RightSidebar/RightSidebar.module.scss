@@ -1,7 +1,7 @@
 .root {
   background-color: white;
-  border-radius: 0.3rem;
-  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  border: 1px solid #c8dedd;
   padding: 1rem;
 
   h3 {
@@ -41,6 +41,17 @@
     .button {
       width: auto;
       margin: 0.3rem 0 0;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.3rem 0.9rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+
+      &:hover {
+        background-color: var(--primary-color-dark);
+      }
     }
   }
 }
