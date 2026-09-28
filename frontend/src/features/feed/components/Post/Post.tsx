@@ -275,7 +275,7 @@ export function Post({ post, setPosts }: PostProps) {
             )}
             {showMenu && (
               <div className={classes.menu}>
-                <button onClick={() => setEditing(true)}>Edit</button>
+                {/* <button onClick={() => setEditing(true)}>Edit</button> */}
                 <button onClick={() => deletePost(post.id)}>Delete</button>
               </div>
             )}
