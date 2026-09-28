@@ -125,7 +125,7 @@ To test the CI/CD workflows locally, you can use the `act` tool. First, ensure y
 }
 ```
 
-Run the following command to simulate a push event:
+Run the following command to simulate a push event:  . 
 
 ```
 act -e event.json
