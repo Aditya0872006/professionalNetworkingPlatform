@@ -200,5 +200,186 @@
       font-size: 0.9rem;
     }
   }
-}
 
+  // ── AI Toggle Button ────────────────────────────────────────────────────────
+  .aiToggleBtn {
+    margin-top: 0.85rem;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: #f0f8ff;
+    color: #1a5fb4;
+    border: 1px solid #b6d4fe;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover {
+      background: #dbeafe;
+    }
+  }
+
+  // ── AI Report Panel ─────────────────────────────────────────────────────────
+  .aiReport {
+    margin-top: 1rem;
+    padding: 1rem 1.15rem;
+    border: 1px solid #d1e9ff;
+    border-radius: 8px;
+    background: #f8fbff;
+    font-size: 0.85rem;
+
+    .aiReportHeader {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.85rem;
+    }
+
+    .modelTag {
+      font-size: 0.75rem;
+      color: #888;
+      font-style: italic;
+    }
+  }
+
+  // ── Trust Badges ────────────────────────────────────────────────────────────
+  .trustBadgeLarge {
+    display: inline-block;
+    padding: 0.35rem 0.85rem;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.01em;
+  }
+
+  .trustLegitimate {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+  }
+
+  .trustSuspicious {
+    background: #fff8e1;
+    color: #b76e00;
+    border: 1px solid #ffe082;
+  }
+
+  .trustLikelyFake {
+    background: #fff3e0;
+    color: #e65100;
+    border: 1px solid #ffcc80;
+  }
+
+  .trustHighRisk {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+  }
+
+  // ── Sub-score bars ──────────────────────────────────────────────────────────
+  .subScores {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.85rem;
+
+    .scoreRow {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+
+      .scoreLabel {
+        width: 90px;
+        font-size: 0.78rem;
+        color: #555;
+        flex-shrink: 0;
+      }
+
+      .scoreBarWrap {
+        flex: 1;
+        height: 8px;
+        background: #e0e0e0;
+        border-radius: 4px;
+        overflow: hidden;
+
+        .scoreBarFill {
+          height: 100%;
+          background: linear-gradient(90deg, #1a7a6e, #4caf50);
+          border-radius: 4px;
+          transition: width 0.4s ease;
+        }
+      }
+
+      .scoreVal {
+        width: 40px;
+        font-size: 0.75rem;
+        color: #666;
+        text-align: right;
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  // ── Flags ───────────────────────────────────────────────────────────────────
+  .flagList {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 6px;
+    padding: 0.65rem 0.85rem;
+    margin-bottom: 0.75rem;
+    color: #5d4037;
+
+    strong {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-size: 0.82rem;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.25rem;
+
+      li {
+        font-size: 0.8rem;
+        line-height: 1.6;
+      }
+    }
+  }
+
+  // ── Reasoning ───────────────────────────────────────────────────────────────
+  .reasoning {
+    background: #f3f4f6;
+    border-radius: 6px;
+    padding: 0.65rem 0.85rem;
+    color: #444;
+    font-size: 0.82rem;
+
+    strong {
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.55;
+    }
+  }
+
+  // ── Loading / Error ─────────────────────────────────────────────────────────
+  .aiLoading {
+    margin-top: 0.75rem;
+    font-size: 0.82rem;
+    color: #888;
+    font-style: italic;
+  }
+
+  .aiError {
+    margin-top: 0.75rem;
+    font-size: 0.82rem;
+    color: #c62828;
+    background: #ffebee;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+  }
+}

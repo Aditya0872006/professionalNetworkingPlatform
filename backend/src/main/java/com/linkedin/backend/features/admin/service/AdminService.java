@@ -13,7 +13,9 @@ import com.linkedin.backend.features.jobs.service.JobService;
 import com.linkedin.backend.features.notifications.service.NotificationService;
 import com.linkedin.backend.features.recruiter.model.RecruiterProfile;
 import com.linkedin.backend.features.recruiter.model.RecruiterStatus;
+import com.linkedin.backend.features.recruiter.model.RecruiterVerificationReport;
 import com.linkedin.backend.features.recruiter.repository.RecruiterProfileRepository;
+import com.linkedin.backend.features.recruiter.repository.RecruiterVerificationReportRepository;
 import com.linkedin.backend.features.recruiter.service.RecruiterService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ public class AdminService {
 
     private final UserRepository userRepository;
     private final RecruiterProfileRepository recruiterProfileRepository;
+    private final RecruiterVerificationReportRepository verificationReportRepository;
     private final RecruiterService recruiterService;
     private final JobRepository jobRepository;
     private final JobService jobService;
@@ -33,6 +36,7 @@ public class AdminService {
 
     public AdminService(UserRepository userRepository,
                         RecruiterProfileRepository recruiterProfileRepository,
+                        RecruiterVerificationReportRepository verificationReportRepository,
                         RecruiterService recruiterService,
                         JobRepository jobRepository,
                         JobService jobService,
@@ -40,6 +44,7 @@ public class AdminService {
                         NotificationService notificationService) {
         this.userRepository = userRepository;
         this.recruiterProfileRepository = recruiterProfileRepository;
+        this.verificationReportRepository = verificationReportRepository;
         this.recruiterService = recruiterService;
         this.jobRepository = jobRepository;
         this.jobService = jobService;
@@ -155,5 +160,13 @@ public class AdminService {
         if (user == null || user.getRole() != Role.ROLE_ADMIN) {
             throw new IllegalArgumentException("Access denied: Administrator privileges required.");
         }
+    }
+
+    public RecruiterVerificationReport getAiReport(Long profileId, User admin) {
+        validateAdmin(admin);
+        return verificationReportRepository.findByRecruiterProfileId(profileId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "AI verification report not found for recruiter profile " + profileId
+                        + ". Analysis may still be in progress — please try again in a few seconds."));
     }
 }

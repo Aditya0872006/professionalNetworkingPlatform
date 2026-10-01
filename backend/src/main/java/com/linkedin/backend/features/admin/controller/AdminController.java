@@ -8,12 +8,15 @@ import com.linkedin.backend.features.authentication.model.User;
 import com.linkedin.backend.features.authentication.model.UserStatus;
 import com.linkedin.backend.features.feed.model.Post;
 import com.linkedin.backend.features.jobs.model.Job;
+import com.linkedin.backend.features.recruiter.dto.RecruiterAIReportDto;
 import com.linkedin.backend.features.recruiter.model.RecruiterProfile;
 import com.linkedin.backend.features.recruiter.model.RecruiterStatus;
+import com.linkedin.backend.features.recruiter.model.RecruiterVerificationReport;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -59,6 +62,21 @@ public class AdminController {
             @RequestParam(value = "status", required = false) RecruiterStatus status,
             @RequestAttribute("authenticatedUser") User admin) {
         return ResponseEntity.ok(adminService.getRecruiterApplications(status));
+    }
+
+    @GetMapping("/recruiters/{id}/ai-report")
+    public ResponseEntity<?> getRecruiterAIReport(
+            @PathVariable Long id,
+            @RequestAttribute("authenticatedUser") User admin) {
+        try {
+            RecruiterVerificationReport report = adminService.getAiReport(id, admin);
+            return ResponseEntity.ok(RecruiterAIReportDto.from(report));
+        } catch (IllegalArgumentException ex) {
+            // Report not yet ready (async analysis still running) — return 202
+            return ResponseEntity.accepted()
+                    .body(Map.of("pending", true,
+                                 "message", "AI analysis is still in progress. Please try again in a few seconds."));
+        }
     }
 
     @PutMapping("/recruiters/{id}/approve")

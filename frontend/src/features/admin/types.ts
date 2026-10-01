@@ -12,6 +12,12 @@ export interface IAdminStats {
 
 export type RecruiterStatus = "PENDING" | "APPROVED" | "REJECTED" | "PERMANENTLY_REJECTED";
 
+export type RecruiterTrustLevel =
+  | "LEGITIMATE"
+  | "SUSPICIOUS"
+  | "LIKELY_FAKE"
+  | "HIGH_RISK";
+
 export interface IRecruiterProfile {
   id: number;
   user: IUser;
@@ -23,6 +29,21 @@ export interface IRecruiterProfile {
   status: RecruiterStatus;
   rejectionCount: number;
   createdAt: string;
+}
+
+export interface IRecruiterAIReport {
+  recruiterProfileId: number;
+  trustLevel: RecruiterTrustLevel;
+  trustScore: number;
+  emailScore: number;
+  websiteScore: number;
+  companyScore: number;
+  locationScore: number;
+  consistencyScore: number;
+  flags: string[];
+  reasoning: string;
+  modelUsed: string;
+  analyzedAt: string;
 }
 
 export interface IAdminJob {

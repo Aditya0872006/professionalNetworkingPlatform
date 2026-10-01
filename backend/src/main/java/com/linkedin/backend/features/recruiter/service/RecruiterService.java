@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import com.linkedin.backend.features.recruiter.service.HuggingFaceVerificationService;
+
 @Service
 public class RecruiterService {
 
@@ -26,17 +28,20 @@ public class RecruiterService {
     private final Encoder encoder;
     private final JsonWebToken jsonWebToken;
     private final NotificationService notificationService;
+    private final HuggingFaceVerificationService verificationService;
 
     public RecruiterService(RecruiterProfileRepository recruiterProfileRepository,
                             UserRepository userRepository,
                             Encoder encoder,
                             JsonWebToken jsonWebToken,
-                            NotificationService notificationService) {
+                            NotificationService notificationService,
+                            HuggingFaceVerificationService verificationService) {
         this.recruiterProfileRepository = recruiterProfileRepository;
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.jsonWebToken = jsonWebToken;
         this.notificationService = notificationService;
+        this.verificationService = verificationService;
     }
 
     @Transactional
@@ -68,7 +73,10 @@ public class RecruiterService {
         );
         profile.setStatus(RecruiterStatus.PENDING);
         profile.setRejectionCount(0);
-        recruiterProfileRepository.save(profile);
+        RecruiterProfile savedProfile = recruiterProfileRepository.save(profile);
+
+        // Trigger AI trust analysis in background (non-blocking)
+        verificationService.analyzeAsync(savedProfile);
 
         String token = jsonWebToken.generateToken(savedUser.getEmail());
         return new AuthenticationResponseBody(
@@ -153,7 +161,11 @@ public class RecruiterService {
         }
 
         profile.setStatus(RecruiterStatus.PENDING);
-        return recruiterProfileRepository.save(profile);
+        RecruiterProfile saved = recruiterProfileRepository.save(profile);
+
+        // Re-run AI trust analysis so the admin sees a fresh report
+        verificationService.analyzeAsync(saved);
+        return saved;
     }
 
     public boolean isApprovedRecruiter(Long userId) {
