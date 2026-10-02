@@ -16,11 +16,13 @@ import com.linkedin.backend.features.recruiter.model.RecruiterStatus;
 import com.linkedin.backend.features.recruiter.model.RecruiterVerificationReport;
 import com.linkedin.backend.features.recruiter.repository.RecruiterProfileRepository;
 import com.linkedin.backend.features.recruiter.repository.RecruiterVerificationReportRepository;
+import com.linkedin.backend.features.recruiter.service.HuggingFaceVerificationService;
 import com.linkedin.backend.features.recruiter.service.RecruiterService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AdminService {
@@ -29,6 +31,7 @@ public class AdminService {
     private final RecruiterProfileRepository recruiterProfileRepository;
     private final RecruiterVerificationReportRepository verificationReportRepository;
     private final RecruiterService recruiterService;
+    private final HuggingFaceVerificationService verificationService;
     private final JobRepository jobRepository;
     private final JobService jobService;
     private final PostRepository postRepository;
@@ -38,6 +41,7 @@ public class AdminService {
                         RecruiterProfileRepository recruiterProfileRepository,
                         RecruiterVerificationReportRepository verificationReportRepository,
                         RecruiterService recruiterService,
+                        HuggingFaceVerificationService verificationService,
                         JobRepository jobRepository,
                         JobService jobService,
                         PostRepository postRepository,
@@ -46,6 +50,7 @@ public class AdminService {
         this.recruiterProfileRepository = recruiterProfileRepository;
         this.verificationReportRepository = verificationReportRepository;
         this.recruiterService = recruiterService;
+        this.verificationService = verificationService;
         this.jobRepository = jobRepository;
         this.jobService = jobService;
         this.postRepository = postRepository;
@@ -163,10 +168,23 @@ public class AdminService {
     }
 
     public RecruiterVerificationReport getAiReport(Long profileId, User admin) {
+        return getAiReport(profileId, false, admin);
+    }
+
+    public RecruiterVerificationReport getAiReport(Long profileId, boolean refresh, User admin) {
         validateAdmin(admin);
-        return verificationReportRepository.findByRecruiterProfileId(profileId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "AI verification report not found for recruiter profile " + profileId
-                        + ". Analysis may still be in progress — please try again in a few seconds."));
+        Optional<RecruiterVerificationReport> reportOpt = verificationReportRepository.findByRecruiterProfileId(profileId);
+
+        if (!refresh && reportOpt.isPresent()) {
+            RecruiterVerificationReport report = reportOpt.get();
+            // If the report was evaluated previously when HuggingFace was unavailable, attempt to re-analyze now
+            if (report.getModelUsed() == null || !report.getModelUsed().contains("unavailable")) {
+                return report;
+            }
+        }
+
+        RecruiterProfile profile = recruiterProfileRepository.findById(profileId)
+                .orElseThrow(() -> new IllegalArgumentException("Recruiter profile not found with id " + profileId));
+        return verificationService.analyzeAndSave(profile);
     }
 }

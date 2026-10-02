@@ -38,6 +38,9 @@ import { AdminRecruiters } from "./features/admin/pages/AdminRecruiters/AdminRec
 import { AdminJobs } from "./features/admin/pages/AdminJobs/AdminJobs";
 import { AdminPosts } from "./features/admin/pages/AdminPosts/AdminPosts";
 
+// Resume Module
+import { ResumeBuilder } from "./features/resume/pages/ResumeBuilder/ResumeBuilder";
+
 import "./index.scss";
 
 const router = createBrowserRouter([
@@ -155,6 +158,12 @@ const router = createBrowserRouter([
           {
             path: "admin/posts",
             element: <AdminPosts />,
+          },
+
+          // Resume Module Route
+          {
+            path: "resume",
+            element: <ResumeBuilder />,
           },
         ],
       },

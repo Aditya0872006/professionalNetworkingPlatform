@@ -41,8 +41,8 @@ public class HuggingFaceVerificationService {
     private static final Logger log = LoggerFactory.getLogger(HuggingFaceVerificationService.class);
 
     // ── HuggingFace ───────────────────────────────────────────────────────────
-    private static final String HF_API_URL =
-            "https://api-inference.huggingface.co/models/facebook/bart-large-mnli";
+    private static final String DEFAULT_HF_API_URL =
+            "https://router.huggingface.co/hf-inference/models/facebook/bart-large-mnli";
 
     private static final List<String> CANDIDATE_LABELS = List.of(
             "legitimate company", "suspicious profile", "fake company", "spam registration"
@@ -68,6 +68,9 @@ public class HuggingFaceVerificationService {
     private static final Pattern IP_URL       = Pattern.compile("https?://\\d+\\.\\d+\\.\\d+\\.\\d+");
 
     // ── Injections ─────────────────────────────────────────────────────────────
+    @Value("${huggingface.api.url:" + DEFAULT_HF_API_URL + "}")
+    private String hfApiUrl;
+
     @Value("${huggingface.api.token:}")
     private String hfToken;
 
@@ -90,6 +93,34 @@ public class HuggingFaceVerificationService {
     // ── Public API ─────────────────────────────────────────────────────────────
 
     /**
+     * Runs AI verification synchronously and updates/saves the report in the repository.
+     */
+    public RecruiterVerificationReport analyzeAndSave(RecruiterProfile profile) {
+        RecruiterVerificationReport newReport = analyze(profile);
+        RecruiterVerificationReport target = reportRepository.findByRecruiterProfileId(profile.getId())
+                .orElse(newReport);
+
+        if (target != newReport) {
+            target.setTrustLevel(newReport.getTrustLevel());
+            target.setTrustScore(newReport.getTrustScore());
+            target.setEmailScore(newReport.getEmailScore());
+            target.setWebsiteScore(newReport.getWebsiteScore());
+            target.setCompanyScore(newReport.getCompanyScore());
+            target.setLocationScore(newReport.getLocationScore());
+            target.setConsistencyScore(newReport.getConsistencyScore());
+            target.setFlags(newReport.getFlags());
+            target.setReasoning(newReport.getReasoning());
+            target.setModelUsed(newReport.getModelUsed());
+            target.setAnalyzedAt(java.time.LocalDateTime.now());
+        }
+
+        RecruiterVerificationReport saved = reportRepository.save(target);
+        log.info("[AI-Verify] Profile {} → {} (score={}, model={})",
+                profile.getId(), saved.getTrustLevel(), saved.getTrustScore(), saved.getModelUsed());
+        return saved;
+    }
+
+    /**
      * Runs AI verification asynchronously — does NOT block the signup thread.
      * Safe to call and forget; any exception is caught and logged.
      */
@@ -100,15 +131,8 @@ public class HuggingFaceVerificationService {
             return;
         }
 
-        // Delete any previous report (re-analysis on reapply)
-        reportRepository.findByRecruiterProfileId(profile.getId())
-                .ifPresent(reportRepository::delete);
-
         try {
-            RecruiterVerificationReport report = analyze(profile);
-            reportRepository.save(report);
-            log.info("[AI-Verify] Profile {} → {} (score={})",
-                    profile.getId(), report.getTrustLevel(), report.getTrustScore());
+            analyzeAndSave(profile);
         } catch (Exception ex) {
             log.error("[AI-Verify] Failed for profile {}: {}", profile.getId(), ex.getMessage(), ex);
             // Graceful degradation: admin can still review manually without the AI badge
@@ -138,13 +162,13 @@ public class HuggingFaceVerificationService {
         boolean hfAvailable = hfResult.modelScore >= 0;
         if (hfAvailable) {
             finalScore = (int) Math.round(0.40 * ruleTotal + 0.60 * hfResult.modelScore);
+            if (!"legitimate company".equalsIgnoreCase(hfResult.topLabel)) {
+                flags.add(hfResult.modelFlag);
+            }
         } else {
             finalScore = ruleTotal; // 100% rule-based when HF unavailable
         }
         finalScore = Math.max(0, Math.min(100, finalScore));
-
-        // Note: do NOT add hfResult.modelFlag to the recruiter's flags —
-        // system status messages are not red flags about the recruiter.
 
         RecruiterTrustLevel trustLevel = scoreToLevel(finalScore);
 
@@ -326,10 +350,16 @@ public class HuggingFaceVerificationService {
 
     // ── HuggingFace Call ──────────────────────────────────────────────────────
 
+    private String getCleanToken() {
+        if (hfToken == null) return "";
+        return hfToken.trim().replaceAll("^[\"']+|[\"']+$", "").trim();
+    }
+
     private HFResult callHuggingFace(RecruiterProfile p) {
-        if (hfToken == null || hfToken.isBlank()) {
+        String token = getCleanToken();
+        if (token.isBlank()) {
             log.info("[AI-Verify] HuggingFace token not configured — using 100% rule-based score");
-            return new HFResult(-1, ""); // -1 signals: use rule score only
+            return new HFResult(-1, "", ""); // -1 signals: use rule score only
         }
 
         try {
@@ -342,52 +372,91 @@ public class HuggingFaceVerificationService {
             body.put("options", Map.of("wait_for_model", true));
 
             HttpHeaders headers = new HttpHeaders();
-            headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + hfToken);
+            headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);
             headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
-            ResponseEntity<String> response = restTemplate.postForEntity(
-                    HF_API_URL, request, String.class);
+            String url = (hfApiUrl != null && !hfApiUrl.isBlank()) ? hfApiUrl.trim() : DEFAULT_HF_API_URL;
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
 
             return parseHFResponse(response.getBody());
         } catch (Exception ex) {
             log.warn("[AI-Verify] HuggingFace API call failed: {} — using 100% rule-based score", ex.getMessage());
-            return new HFResult(-1, ""); // -1 signals: use rule score only
+            return new HFResult(-1, "", ""); // -1 signals: use rule score only
         }
     }
 
     private HFResult parseHFResponse(String json) throws Exception {
-        JsonNode root   = objectMapper.readTree(json);
-        JsonNode labels = root.get("labels");
-        JsonNode scores = root.get("scores");
-
-        if (labels == null || scores == null || labels.isEmpty()) {
-            return new HFResult(-1, ""); // invalid response — fall back to rules
+        if (json == null || json.isBlank()) {
+            log.warn("[AI-Verify] HuggingFace returned empty response");
+            return new HFResult(-1, "", "");
         }
 
-        // The label with the highest confidence is at index 0
-        String topLabel = labels.get(0).asText();
-        double topScore = scores.get(0).asDouble();
+        JsonNode root = objectMapper.readTree(json);
+
+        if (root.has("error")) {
+            log.warn("[AI-Verify] HuggingFace API returned error: {}", root.get("error").asText());
+            return new HFResult(-1, "", "");
+        }
+
+        String topLabel = null;
+        double topScore = -1.0;
+
+        // HuggingFace router returns an array: [{"label": "...", "score": 0.94}, ...]
+        // or nested array: [[{"label": "...", "score": 0.94}, ...]]
+        if (root.isArray()) {
+            JsonNode items = root;
+            if (root.size() > 0 && root.get(0).isArray()) {
+                items = root.get(0);
+            }
+            for (JsonNode node : items) {
+                if (node.has("label") && node.has("score")) {
+                    String label = node.get("label").asText();
+                    double score = node.get("score").asDouble();
+                    if (score > topScore) {
+                        topScore = score;
+                        topLabel = label;
+                    }
+                }
+            }
+        } else if (root.isObject()) {
+            // Legacy inference endpoint format: { "labels": [...], "scores": [...] }
+            JsonNode labels = root.get("labels");
+            JsonNode scores = root.get("scores");
+            if (labels != null && scores != null && labels.isArray() && scores.isArray() && labels.size() > 0) {
+                topLabel = labels.get(0).asText();
+                topScore = scores.get(0).asDouble();
+            }
+        }
+
+        if (topLabel == null || topScore < 0) {
+            log.warn("[AI-Verify] Could not extract labels and scores from HF response: {}", json);
+            return new HFResult(-1, "", "");
+        }
 
         // Map model label to a 0-100 trust score
-        int modelScore = switch (topLabel) {
-            case "legitimate company"  -> (int) (50 + topScore * 50);  // 50-100
-            case "suspicious profile"  -> (int) (25 + topScore * 30);  // 25-55
-            case "fake company"        -> (int) (10 + topScore * 30);  // 10-40
-            case "spam registration"   -> (int) (topScore * 20);       // 0-20
-            default                    -> 50;
+        int modelScore = switch (topLabel.toLowerCase().trim()) {
+            case "legitimate company" -> (int) Math.round(50 + topScore * 50); // 50-100
+            case "suspicious profile" -> (int) Math.round(25 + (1.0 - topScore) * 30); // 25-55
+            case "fake company"       -> (int) Math.round(10 + (1.0 - topScore) * 30); // 10-40
+            case "spam registration"  -> (int) Math.round((1.0 - topScore) * 20);       // 0-20
+            default                   -> 50;
         };
         modelScore = Math.max(0, Math.min(100, modelScore));
 
-        String modelFlag = "";
-        if (!"legitimate company".equals(topLabel) && topScore > 0.55) {
-            String label = topLabel.substring(0, 1).toUpperCase() + topLabel.substring(1);
-            modelFlag = "🤖 AI model flagged as: " + label
-                    + " (confidence: " + String.format("%.0f", topScore * 100) + "%)";
+        String labelFormatted = topLabel.substring(0, 1).toUpperCase() + topLabel.substring(1);
+        String pct = String.format(Locale.ROOT, "%.0f%%", topScore * 100);
+
+        String modelFlag;
+        if (!"legitimate company".equalsIgnoreCase(topLabel)) {
+            modelFlag = "🤖 AI model flagged as: " + labelFormatted + " (" + pct + " confidence)";
+        } else {
+            modelFlag = "🤖 AI model verified as: " + labelFormatted + " (" + pct + " confidence)";
         }
 
-        return new HFResult(modelScore, modelFlag);
+        return new HFResult(modelScore, modelFlag, topLabel);
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
@@ -459,5 +528,5 @@ public class HuggingFaceVerificationService {
     // ── Inner types ───────────────────────────────────────────────────────────
 
     /** Holds the HuggingFace model's translated trust score and a human-readable flag. */
-    private record HFResult(int modelScore, String modelFlag) {}
+    private record HFResult(int modelScore, String modelFlag, String topLabel) {}
 }

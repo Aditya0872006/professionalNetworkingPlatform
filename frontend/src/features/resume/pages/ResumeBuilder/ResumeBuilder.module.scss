@@ -1,0 +1,351 @@
+.root {
+  min-height: calc(100vh - 60px);
+  background-color: #f3f2ef;
+  padding: 24px 16px;
+}
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* ── Header ──────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.headerIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #0a66c2, #00a0dc);
+  border-radius: 14px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 4px;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+/* ── Warning Banner ──────────────────────────────────── */
+.warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+  color: #6d4c00;
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: #f9a825;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+}
+
+/* ── How It Works ────────────────────────────────────── */
+.howItWorks {
+  margin-bottom: 28px;
+
+  h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 16px;
+  }
+}
+
+.steps {
+  display: flex;
+  gap: 16px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+  background: #f8f8f8;
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid #eee;
+
+  strong {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+
+  p {
+    font-size: 0.82rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.45;
+  }
+}
+
+.stepNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: #0a66c2;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ── Generate Button ─────────────────────────────────── */
+.generateBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #0a66c2, #0056a3);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(10, 102, 194, 0.3);
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #0056a3, #004080);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(10, 102, 194, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+/* ── Error ───────────────────────────────────────────── */
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-top: 16px;
+  color: #991b1b;
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+}
+
+/* ── Loading State ───────────────────────────────────── */
+.loadingState {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 32px;
+  background: #f0f7ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  margin-top: 16px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #bfdbfe;
+  border-top: 4px solid #0a66c2;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingText {
+  .loadingTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e40af;
+    margin: 0 0 4px;
+  }
+
+  .loadingSubtitle {
+    font-size: 0.85rem;
+    color: #3b82f6;
+    margin: 0;
+  }
+}
+
+/* ── Result ──────────────────────────────────────────── */
+.result {
+  margin-top: 8px;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.badgeSuccess {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.badgeWarning {
+  background: #fef9c3;
+  color: #713f12;
+  border: 1px solid #fde047;
+}
+
+.resultMessage {
+  font-size: 0.9rem;
+  color: #444;
+  margin: 0 0 20px;
+}
+
+/* ── PDF Preview ─────────────────────────────────────── */
+.pdfPreview {
+  margin-bottom: 20px;
+
+  h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 10px;
+  }
+}
+
+.pdfFrame {
+  width: 100%;
+  height: 560px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f5f5f5;
+}
+
+/* ── Download Buttons ────────────────────────────────── */
+.downloadButtons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+%btn-base {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.downloadPdfBtn {
+  @extend %btn-base;
+  background: #0a66c2;
+  color: #fff;
+
+  &:hover {
+    background: #0056a3;
+  }
+}
+
+.downloadTexBtn {
+  @extend %btn-base;
+  background: #fff;
+  color: #0a66c2;
+  border: 1.5px solid #0a66c2;
+
+  &:hover {
+    background: #f0f7ff;
+  }
+}
+
+/* ── Regenerate ──────────────────────────────────────── */
+.regenerateBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: transparent;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f5f5f5;
+    border-color: #bbb;
+    color: #333;
+  }
+}

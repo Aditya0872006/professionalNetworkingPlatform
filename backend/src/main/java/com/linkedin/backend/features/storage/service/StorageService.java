@@ -95,6 +95,8 @@ public class StorageService {
                 return MediaType.valueOf("application/msword");
             case ".docx":
                 return MediaType.valueOf("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+            case ".tex":
+                return MediaType.valueOf("application/x-tex");
             default:
                 return MediaType.APPLICATION_OCTET_STREAM;
         }

@@ -41,20 +41,34 @@ function ScoreBar({ label, value, max }: { label: string; value: number; max: nu
 function AIReportPanel({ profileId }: { profileId: number }) {
   const [report, setReport] = useState<IRecruiterAIReport | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  const fetchReport = (refresh = false) => {
+    if (refresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
+    setError("");
+
     request<IRecruiterAIReport>({
-      endpoint: `/api/v1/admin/recruiters/${profileId}/ai-report`,
+      endpoint: `/api/v1/admin/recruiters/${profileId}/ai-report${refresh ? "?refresh=true" : ""}`,
       onSuccess: (data) => {
         setReport(data);
         setLoading(false);
+        setRefreshing(false);
       },
       onFailure: (err) => {
         setError(err);
         setLoading(false);
+        setRefreshing(false);
       },
     });
+  };
+
+  useEffect(() => {
+    fetchReport(false);
   }, [profileId]);
 
   if (loading) return <div className={classes.aiLoading}>🤖 Loading AI analysis…</div>;
@@ -70,6 +84,14 @@ function AIReportPanel({ profileId }: { profileId: number }) {
           {meta.icon} {meta.label} — {report.trustScore}/100
         </span>
         <span className={classes.modelTag}>🤖 {report.modelUsed}</span>
+        <button
+          className={classes.reanalyzeBtn}
+          onClick={() => fetchReport(true)}
+          disabled={refreshing}
+          title="Re-run AI analysis via HuggingFace API"
+        >
+          {refreshing ? "🔄 Analyzing…" : "🔄 Re-analyze"}
+        </button>
       </div>
 
       <div className={classes.subScores}>

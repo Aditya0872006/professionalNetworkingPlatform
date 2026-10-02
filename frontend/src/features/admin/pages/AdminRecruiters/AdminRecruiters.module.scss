@@ -234,6 +234,28 @@
       gap: 0.75rem;
       flex-wrap: wrap;
       margin-bottom: 0.85rem;
+
+      .reanalyzeBtn {
+        padding: 0.2rem 0.6rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        border-radius: 12px;
+        cursor: pointer;
+        margin-left: auto;
+        transition: all 0.15s ease;
+
+        &:hover:not(:disabled) {
+          background: #dcfce7;
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
     }
 
     .modelTag {

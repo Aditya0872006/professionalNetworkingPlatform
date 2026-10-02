@@ -67,9 +67,10 @@ public class AdminController {
     @GetMapping("/recruiters/{id}/ai-report")
     public ResponseEntity<?> getRecruiterAIReport(
             @PathVariable Long id,
+            @RequestParam(value = "refresh", defaultValue = "false") boolean refresh,
             @RequestAttribute("authenticatedUser") User admin) {
         try {
-            RecruiterVerificationReport report = adminService.getAiReport(id, admin);
+            RecruiterVerificationReport report = adminService.getAiReport(id, refresh, admin);
             return ResponseEntity.ok(RecruiterAIReportDto.from(report));
         } catch (IllegalArgumentException ex) {
             // Report not yet ready (async analysis still running) — return 202

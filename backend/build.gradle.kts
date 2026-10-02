@@ -44,6 +44,9 @@ dependencies {
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // PDF Generation (resume builder)
+    implementation("com.github.librepdf:openpdf:1.3.43")
 }
 
 tasks.withType<Test> {
