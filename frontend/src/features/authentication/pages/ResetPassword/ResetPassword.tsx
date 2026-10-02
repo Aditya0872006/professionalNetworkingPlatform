@@ -61,8 +61,7 @@ export function ResetPassword() {
             }}
           >
             <p>
-              Enter your email and we’ll send a verification code if it matches an existing LinkedIn
-              account.
+              Enter your email and we’ll send a verification code if it matches an existing account.
             </p>
             <Input key="email" name="email" type="email" label="Email" />
             <p style={{ color: "red" }}>{errorMessage}</p>

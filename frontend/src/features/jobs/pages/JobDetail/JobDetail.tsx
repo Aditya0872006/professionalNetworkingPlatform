@@ -127,7 +127,9 @@ export function JobDetail() {
     return mode ? mode.replace(/_/g, "-").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()) : "";
   };
 
-  const canApply = user?.role === "ROLE_USER" && !job.hasApplied && !job.expired && job.status === "PUBLISHED";
+  const isPastDeadline = job?.deadline ? new Date() > new Date(job.deadline) : false;
+  const actuallyExpired = job.expired || isPastDeadline;
+  const canApply = user?.role === "ROLE_USER" && !job.hasApplied && job.status === "PUBLISHED";
 
   return (
     <div className={classes.root}>
@@ -148,13 +150,13 @@ export function JobDetail() {
               <div className={classes.appliedNotice}>
                 ✓ You applied for this role
               </div>
-            ) : job.expired ? (
-              <div style={{ color: "#c62828", fontWeight: 600 }}>
-                Deadline Passed
-              </div>
             ) : canApply ? (
-              <Button onClick={() => setIsApplyModalOpen(true)}>
-                Apply Now
+              <Button 
+                onClick={() => setIsApplyModalOpen(true)}
+                disabled={actuallyExpired}
+                style={actuallyExpired ? { backgroundColor: "#ffebee", color: "#c62828", border: "1px solid #ffcdd2", opacity: 1 } : {}}
+              >
+                {actuallyExpired ? "Deadline Passed" : "Apply Now"}
               </Button>
             ) : user?.role === "ROLE_RECRUITER" && user.id === String(job.recruiterId) ? (
               <Button outline onClick={() => navigate(`/recruiter/jobs/${job.id}/applicants`)}>
@@ -170,10 +172,10 @@ export function JobDetail() {
 
         {/* Deadline Notification */}
         {job.deadline && (
-          <div className={`${classes.deadlineAlert} ${job.expired ? classes.expired : classes.active}`}>
-            {job.expired ? (
+          <div className={`${classes.deadlineAlert} ${actuallyExpired ? classes.expired : classes.active}`}>
+            {actuallyExpired ? (
               <span>
-                ⚠️ <strong>Application Closed:</strong> The deadline ({new Date(job.deadline).toLocaleDateString()}) has expired. New applications are no longer accepted.
+                <strong>Application Closed:</strong> The deadline ({new Date(job.deadline).toLocaleDateString()}) has expired. New applications are no longer accepted.
               </span>
             ) : (
               <span>

@@ -31,9 +31,9 @@
   }
 
   &:disabled {
-    color: black;
-    background-color: rgb(217 217 217);
-    cursor: not-allowed;
+    color: white;
+    background-color: #a5c9c5;
+    cursor: default;
   }
 
   &:not(:disabled, .outline):hover {
