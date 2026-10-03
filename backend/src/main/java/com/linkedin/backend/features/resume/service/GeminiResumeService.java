@@ -59,6 +59,8 @@ public class GeminiResumeService {
             9. Contact info (name, email, location, LinkedIn-style profile) goes in the header.
             10. The Skills section should list skills as comma-separated categories, e.g.:
                 \\textbf{Languages:} Java, Python $|$ \\textbf{Frameworks:} Spring Boot, React
+            11. Use ONLY standard, universally installed LaTeX packages: latexsym, fullpage, titlesec, color, verbatim, enumitem, hyperref, fancyhdr, babel, tabularx. Do NOT include marvosym, fontawesome, or other non-standard symbol packages.
+            12. For margins, use strictly: \\addtolength{\\oddsidemargin}{-0.5in}, \\addtolength{\\evensidemargin}{-0.5in}, \\addtolength{\\textwidth}{1in}, \\addtolength{\\topmargin}{-.5in}, \\addtolength{\\textheight}{1.0in}. NEVER invent commands like \\topbottom. All divider comments must start with % (e.g. % --------).
             """;
 
     @Value("${gemini.api.key:}")

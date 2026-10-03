@@ -63,4 +63,17 @@ public class ResumeController {
                     .body(new Response("An unexpected error occurred while generating your resume. Please try again."));
         }
     }
+
+    /**
+     * Retrieves the latest generated resume for the authenticated user, if any.
+     */
+    @GetMapping("/latest")
+    public ResponseEntity<?> getLatestResume(
+            @RequestAttribute("authenticatedUser") User user) {
+        ResumeGenerationResponseDto latest = resumeBuilderService.getLatestResume(user).orElse(null);
+        if (latest == null) {
+            return ResponseEntity.ok(new ResumeGenerationResponseDto(null, null, "NOT_FOUND", "No resume found."));
+        }
+        return ResponseEntity.ok(latest);
+    }
 }

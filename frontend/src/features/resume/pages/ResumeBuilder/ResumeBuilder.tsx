@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthentication } from "../../../../features/authentication/contexts/AuthenticationContextProvider";
 import { request } from "../../../../utils/api";
 import classes from "./ResumeBuilder.module.scss";
 
 interface ResumeResult {
-  texFileUrl: string;
+  texFileUrl: string | null;
   pdfFileUrl: string | null;
-  status: "PDF_READY" | "TEX_ONLY";
+  status: "PDF_READY" | "TEX_ONLY" | "NOT_FOUND";
   message: string;
 }
 
@@ -19,6 +19,7 @@ export function ResumeBuilder() {
   );
   const [result, setResult] = useState<ResumeResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isCheckingExisting, setIsCheckingExisting] = useState<boolean>(true);
 
   const profileIncomplete =
     !user?.firstName ||
@@ -26,6 +27,31 @@ export function ResumeBuilder() {
     !user?.position ||
     !user?.company ||
     !user?.location;
+
+  useEffect(() => {
+    setIsCheckingExisting(true);
+    request<ResumeResult>({
+      endpoint: "/api/v1/resume/latest",
+      method: "GET",
+      onSuccess: (data) => {
+        setIsCheckingExisting(false);
+        if (
+          data &&
+          data.status !== "NOT_FOUND" &&
+          (data.pdfFileUrl || data.texFileUrl)
+        ) {
+          setResult(data);
+          setStatus("done");
+        } else {
+          setStatus("idle");
+        }
+      },
+      onFailure: () => {
+        setIsCheckingExisting(false);
+        setStatus("idle");
+      },
+    });
+  }, [user?.id]);
 
   const handleGenerate = () => {
     setStatus("loading");
@@ -95,8 +121,23 @@ export function ResumeBuilder() {
           </div>
         )}
 
-        {/* ── How It Works ─────────────────────────────── */}
-        {status === "idle" && (
+        {/* ── Checking for existing resume ─────────────── */}
+        {isCheckingExisting && (
+          <div className={classes.loadingState}>
+            <div className={classes.spinner} />
+            <div className={classes.loadingText}>
+              <p className={classes.loadingTitle}>Loading your resume...</p>
+              <p className={classes.loadingSubtitle}>
+                Checking for your previously generated resume...
+              </p>
+            </div>
+          </div>
+        )}
+
+        {!isCheckingExisting && (
+          <>
+            {/* ── How It Works ─────────────────────────────── */}
+            {status === "idle" && (
           <div className={classes.howItWorks}>
             <h2>How it works</h2>
             <div className={classes.steps}>
@@ -283,6 +324,8 @@ export function ResumeBuilder() {
               Regenerate Resume
             </button>
           </div>
+        )}
+          </>
         )}
       </div>
     </div>
