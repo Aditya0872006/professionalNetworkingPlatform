@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="./screenshot.png" alt="Platform Screenshot" width="100%" />
-</p>
-
 <h1 align="center">Professional Networking & Recruitment Platform</h1>
 
 <p align="center">
