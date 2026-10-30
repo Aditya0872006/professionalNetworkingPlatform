@@ -486,10 +486,10 @@ public class HuggingFaceVerificationService {
 
             // Map label → 0-100 trust score (same scale as the old HF logic)
             int modelScore = switch (topLabel.toLowerCase().trim()) {
-                case "legitimate company" -> (int) Math.round(50 + confidence * 50); // 50-100
-                case "suspicious profile" -> (int) Math.round(25 + (1.0 - confidence) * 30); // 25-55
-                case "fake company"       -> (int) Math.round(10 + (1.0 - confidence) * 30); // 10-40
-                case "spam registration"  -> (int) Math.round((1.0 - confidence) * 20);       // 0-20
+                case "legitimate company" -> (int) Math.round(70 + confidence * 30); // 50-100
+                case "suspicious profile" -> (int) Math.round(50 + (1.0 - confidence) * 24); // 25-55
+                case "fake company"       -> (int) Math.round(25 + (1.0 - confidence) * 24); // 10-40
+                case "spam registration"  -> (int) Math.round((1.0 - confidence) * 24);       // 0-20
                 default                   -> 50;
             };
             modelScore = Math.max(0, Math.min(100, modelScore));

@@ -27,6 +27,33 @@ export function ResumeBuilder() {
     !user?.position ||
     !user?.company ||
     !user?.location;
+  
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let activeUrl: string | null = null;
+
+    if (result?.pdfFileUrl) {
+      fetch(`${BASE_URL}${result.pdfFileUrl}`)
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to load PDF");
+          return res.blob();
+        })
+        .then((blob) => {
+          activeUrl = URL.createObjectURL(blob);
+          setPdfBlobUrl(activeUrl);
+        })
+        .catch((err) => console.error("Error loading PDF preview:", err));
+    } else {
+      setPdfBlobUrl(null);
+    }
+
+    return () => {
+      if (activeUrl) {
+        URL.revokeObjectURL(activeUrl);
+      }
+    };
+  }, [result?.pdfFileUrl]);
 
   useEffect(() => {
     setIsCheckingExisting(true);
@@ -271,12 +298,28 @@ export function ResumeBuilder() {
             {/* PDF Preview (when PDF is available) */}
             {result.pdfFileUrl && (
               <div className={classes.pdfPreview}>
-                <h3>Preview</h3>
-                <iframe
-                  src={`${BASE_URL}${result.pdfFileUrl}`}
-                  title="Resume Preview"
-                  className={classes.pdfFrame}
-                />
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                  <h3 style={{ margin: 0 }}>Preview</h3>
+                  <a
+                    href={`${BASE_URL}${result.pdfFileUrl}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ fontSize: "0.85rem", color: "#0a66c2", textDecoration: "none", fontWeight: 500 }}
+                  >
+                    Open in new tab ↗
+                  </a>
+                </div>
+                {pdfBlobUrl ? (
+                  <iframe
+                    src={pdfBlobUrl}
+                    title="Resume Preview"
+                    className={classes.pdfFrame}
+                  />
+                ) : (
+                  <div style={{ padding: "1.5rem", textAlign: "center", color: "#666", fontSize: "0.9rem" }}>
+                    Loading preview...
+                  </div>
+                )}
               </div>
             )}
 
