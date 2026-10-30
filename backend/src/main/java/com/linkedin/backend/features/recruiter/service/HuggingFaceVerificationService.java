@@ -18,18 +18,20 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * AI-powered recruiter verification service using the Hugging Face Inference API.
+ * AI-powered recruiter verification service.
  *
- * <p>Primary model: {@code facebook/bart-large-mnli} (zero-shot text classification) — free tier.
+ * <p>Primary AI: Google Gemini Flash (free tier — 1500 req/day).
+ * Fallback: 100% rule-based scoring when Gemini is unavailable.
  *
  * <p>Strategy:
  * <ol>
  *   <li>Build a plain-text summary of all recruiter profile fields.</li>
- *   <li>Send it to HuggingFace zero-shot classification with four candidate labels.</li>
- *   <li>The model returns a confidence score for each label.</li>
- *   <li>Map the top label to a {@link RecruiterTrustLevel}.</li>
+ *   <li>Send it to Gemini with a structured prompt asking for a trust classification.</li>
+ *   <li>Gemini returns JSON: label + confidence + short reason.</li>
+ *   <li>Map the label to a {@link RecruiterTrustLevel}.</li>
  *   <li>Run lightweight rule-based sub-scorers (email, website, company, location,
  *       consistency) to compute per-dimension scores for admin visibility.</li>
+ *   <li>Blend: 40% rules + 60% Gemini score.</li>
  *   <li>Persist a {@link RecruiterVerificationReport} — the admin dashboard reads it.</li>
  * </ol>
  *
@@ -40,9 +42,32 @@ public class HuggingFaceVerificationService {
 
     private static final Logger log = LoggerFactory.getLogger(HuggingFaceVerificationService.class);
 
-    // ── HuggingFace ───────────────────────────────────────────────────────────
-    private static final String DEFAULT_HF_API_URL =
-            "https://router.huggingface.co/hf-inference/models/facebook/bart-large-mnli";
+    // ── Gemini ────────────────────────────────────────────────────────────────
+    private static final String GEMINI_API_BASE =
+            "https://generativelanguage.googleapis.com/v1beta/models/";
+
+    /**
+     * Prompt sent to Gemini. Instructs it to return a strict JSON object so we
+     * can parse the result reliably without any markdown or extra prose.
+     */
+    private static final String GEMINI_SYSTEM_PROMPT = """
+            You are a recruiter profile fraud-detection system.
+            Analyze the recruiter registration details provided and classify the profile.
+
+            Return ONLY a valid JSON object — no markdown, no explanation outside the JSON.
+            Use exactly this structure:
+            {
+              "label": "<one of: legitimate company | suspicious profile | fake company | spam registration>",
+              "confidence": <float between 0.0 and 1.0>,
+              "reason": "<one sentence explaining the classification>"
+            }
+
+            Classification guide:
+            - legitimate company: real business name, corporate email, proper website, consistent details
+            - suspicious profile: some red flags (free email, missing website, vague description)
+            - fake company: placeholder name, random characters, clearly fabricated details
+            - spam registration: obvious bot/spam attempt, no meaningful data
+            """;
 
     private static final List<String> CANDIDATE_LABELS = List.of(
             "legitimate company", "suspicious profile", "fake company", "spam registration"
@@ -68,11 +93,11 @@ public class HuggingFaceVerificationService {
     private static final Pattern IP_URL       = Pattern.compile("https?://\\d+\\.\\d+\\.\\d+\\.\\d+");
 
     // ── Injections ─────────────────────────────────────────────────────────────
-    @Value("${huggingface.api.url:" + DEFAULT_HF_API_URL + "}")
-    private String hfApiUrl;
+    @Value("${gemini.api.key:}")
+    private String geminiApiKey;
 
-    @Value("${huggingface.api.token:}")
-    private String hfToken;
+    @Value("${gemini.model.name:gemini-2.0-flash}")
+    private String geminiModelName;
 
     @Value("${recruiter.ai.verification.enabled:true}")
     private boolean enabled;
@@ -153,8 +178,8 @@ public class HuggingFaceVerificationService {
 
         int ruleTotal = emailScore + websiteScore + companyScore + locationScore + consistencyScore; // 0-100
 
-        // ─ HuggingFace zero-shot classification ───────────────────────────────
-        HFResult hfResult = callHuggingFace(profile);
+        // ─ Gemini AI classification ───────────────────────────────────────────
+        HFResult hfResult = callGemini(profile);
 
         // ─ Blend: 40% rules + 60% HF model ───────────────────────────────────
         // If HF model was unavailable (modelScore == -1), use 100% rule score
@@ -188,8 +213,8 @@ public class HuggingFaceVerificationService {
         report.setFlagList(flags);
         report.setReasoning(reasoning);
         report.setModelUsed(hfAvailable
-                ? "HuggingFace bart-large-mnli (zero-shot, 60%) + rule engine (40%)"
-                : "Rule-based analysis only (HuggingFace model unavailable)");
+                ? "Google Gemini AI (zero-shot, 60%) + rule engine (40%)"
+                : "Rule-based analysis only (Gemini model unavailable)");
         return report;
     }
 
@@ -348,115 +373,144 @@ public class HuggingFaceVerificationService {
         return Math.max(0, Math.min(20, score));
     }
 
-    // ── HuggingFace Call ──────────────────────────────────────────────────────
+    // ── Gemini Call ───────────────────────────────────────────────────────────
 
-    private String getCleanToken() {
-        if (hfToken == null) return "";
-        return hfToken.trim().replaceAll("^[\"']+|[\"']+$", "").trim();
-    }
-
-    private HFResult callHuggingFace(RecruiterProfile p) {
-        String token = getCleanToken();
-        if (token.isBlank()) {
-            log.info("[AI-Verify] HuggingFace token not configured — using 100% rule-based score");
-            return new HFResult(-1, "", ""); // -1 signals: use rule score only
+    /**
+     * Sends the recruiter profile to Google Gemini Flash for trust classification.
+     * Returns an {@link HFResult} with modelScore=-1 on any failure (triggers 100% rule-based fallback).
+     */
+    private HFResult callGemini(RecruiterProfile p) {
+        String apiKey = (geminiApiKey != null) ? geminiApiKey.trim() : "";
+        if (apiKey.isBlank()) {
+            log.info("[AI-Verify] Gemini API key not configured — using 100% rule-based score");
+            return new HFResult(-1, "", "");
         }
 
         try {
-            String inputText = buildInputText(p);
+            String profileText = buildInputText(p);
 
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("inputs", inputText);
-            body.put("parameters", Map.of("candidate_labels", CANDIDATE_LABELS));
-            // wait_for_model: true tells HF to wait for cold-start instead of returning 503
-            body.put("options", Map.of("wait_for_model", true));
+            // Build Gemini REST payload (same pattern as GeminiResumeService)
+            Map<String, Object> systemInstruction = Map.of(
+                    "parts", List.of(Map.of("text", GEMINI_SYSTEM_PROMPT))
+            );
+            Map<String, Object> userContent = Map.of(
+                    "role", "user",
+                    "parts", List.of(Map.of("text", profileText))
+            );
+            Map<String, Object> generationConfig = Map.of(
+                    "temperature", 0.1,        // Very low → deterministic classification
+                    "maxOutputTokens", 256      // JSON response is tiny
+            );
+            Map<String, Object> requestBody = Map.of(
+                    "system_instruction", systemInstruction,
+                    "contents", List.of(userContent),
+                    "generationConfig", generationConfig
+            );
+
+            String url = GEMINI_API_BASE + geminiModelName + ":generateContent?key=" + apiKey;
 
             HttpHeaders headers = new HttpHeaders();
-            headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
-            HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-
-            String url = (hfApiUrl != null && !hfApiUrl.isBlank()) ? hfApiUrl.trim() : DEFAULT_HF_API_URL;
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
 
-            return parseHFResponse(response.getBody());
+            return parseGeminiResponse(response.getBody());
+
         } catch (Exception ex) {
-            log.warn("[AI-Verify] HuggingFace API call failed: {} — using 100% rule-based score", ex.getMessage());
-            return new HFResult(-1, "", ""); // -1 signals: use rule score only
+            log.warn("[AI-Verify] Gemini API call failed: {} — using 100% rule-based score", ex.getMessage());
+            return new HFResult(-1, "", "");
         }
     }
 
-    private HFResult parseHFResponse(String json) throws Exception {
-        if (json == null || json.isBlank()) {
-            log.warn("[AI-Verify] HuggingFace returned empty response");
+    /**
+     * Parses Gemini's response, extracts the inner JSON classification object,
+     * and maps it to an {@link HFResult}.
+     *
+     * <p>Expected Gemini response structure:
+     * <pre>
+     * { "candidates": [{ "content": { "parts": [{ "text": "{\"label\":\"...\",\"confidence\":0.9,\"reason\":\"...\"}" }] } }] }
+     * </pre>
+     */
+    private HFResult parseGeminiResponse(String responseJson) {
+        try {
+            if (responseJson == null || responseJson.isBlank()) {
+                log.warn("[AI-Verify] Gemini returned empty response");
+                return new HFResult(-1, "", "");
+            }
+
+            JsonNode root = objectMapper.readTree(responseJson);
+
+            // Check for API-level error
+            if (root.has("error")) {
+                log.warn("[AI-Verify] Gemini API error: {}", root.path("error").path("message").asText());
+                return new HFResult(-1, "", "");
+            }
+
+            // Navigate to the text content
+            String text = root.path("candidates").path(0)
+                    .path("content").path("parts").path(0)
+                    .path("text").asText(null);
+
+            if (text == null || text.isBlank()) {
+                log.warn("[AI-Verify] Gemini returned no text content");
+                return new HFResult(-1, "", "");
+            }
+
+            // Strip any accidental markdown fences (```json ... ```)
+            text = text.trim();
+            if (text.startsWith("```")) {
+                int newline = text.indexOf('\n');
+                if (newline != -1) text = text.substring(newline + 1);
+            }
+            if (text.endsWith("```")) {
+                text = text.substring(0, text.lastIndexOf("```")).trim();
+            }
+
+            // Parse the inner JSON classification object
+            JsonNode classification = objectMapper.readTree(text);
+            String topLabel  = classification.path("label").asText(null);
+            double confidence = classification.path("confidence").asDouble(-1);
+            String reason    = classification.path("reason").asText("");
+
+            // Validate label
+            if (topLabel == null || CANDIDATE_LABELS.stream().noneMatch(l -> l.equalsIgnoreCase(topLabel))) {
+                log.warn("[AI-Verify] Gemini returned unexpected label: {}", topLabel);
+                return new HFResult(-1, "", "");
+            }
+            if (confidence < 0 || confidence > 1) {
+                log.warn("[AI-Verify] Gemini returned out-of-range confidence: {}", confidence);
+                return new HFResult(-1, "", "");
+            }
+
+            // Map label → 0-100 trust score (same scale as the old HF logic)
+            int modelScore = switch (topLabel.toLowerCase().trim()) {
+                case "legitimate company" -> (int) Math.round(50 + confidence * 50); // 50-100
+                case "suspicious profile" -> (int) Math.round(25 + (1.0 - confidence) * 30); // 25-55
+                case "fake company"       -> (int) Math.round(10 + (1.0 - confidence) * 30); // 10-40
+                case "spam registration"  -> (int) Math.round((1.0 - confidence) * 20);       // 0-20
+                default                   -> 50;
+            };
+            modelScore = Math.max(0, Math.min(100, modelScore));
+
+            String labelFormatted = topLabel.substring(0, 1).toUpperCase() + topLabel.substring(1);
+            String pct = String.format(Locale.ROOT, "%.0f%%", confidence * 100);
+
+            String modelFlag;
+            if (!"legitimate company".equalsIgnoreCase(topLabel)) {
+                modelFlag = "🤖 Gemini flagged as: " + labelFormatted + " (" + pct + " confidence) — " + reason;
+            } else {
+                modelFlag = "🤖 Gemini verified as: " + labelFormatted + " (" + pct + " confidence) — " + reason;
+            }
+
+            log.info("[AI-Verify] Gemini classified as '{}' with {}% confidence", topLabel, pct);
+            return new HFResult(modelScore, modelFlag, topLabel);
+
+        } catch (Exception ex) {
+            log.warn("[AI-Verify] Failed to parse Gemini response: {} — using 100% rule-based score", ex.getMessage());
             return new HFResult(-1, "", "");
         }
-
-        JsonNode root = objectMapper.readTree(json);
-
-        if (root.has("error")) {
-            log.warn("[AI-Verify] HuggingFace API returned error: {}", root.get("error").asText());
-            return new HFResult(-1, "", "");
-        }
-
-        String topLabel = null;
-        double topScore = -1.0;
-
-        // HuggingFace router returns an array: [{"label": "...", "score": 0.94}, ...]
-        // or nested array: [[{"label": "...", "score": 0.94}, ...]]
-        if (root.isArray()) {
-            JsonNode items = root;
-            if (root.size() > 0 && root.get(0).isArray()) {
-                items = root.get(0);
-            }
-            for (JsonNode node : items) {
-                if (node.has("label") && node.has("score")) {
-                    String label = node.get("label").asText();
-                    double score = node.get("score").asDouble();
-                    if (score > topScore) {
-                        topScore = score;
-                        topLabel = label;
-                    }
-                }
-            }
-        } else if (root.isObject()) {
-            // Legacy inference endpoint format: { "labels": [...], "scores": [...] }
-            JsonNode labels = root.get("labels");
-            JsonNode scores = root.get("scores");
-            if (labels != null && scores != null && labels.isArray() && scores.isArray() && labels.size() > 0) {
-                topLabel = labels.get(0).asText();
-                topScore = scores.get(0).asDouble();
-            }
-        }
-
-        if (topLabel == null || topScore < 0) {
-            log.warn("[AI-Verify] Could not extract labels and scores from HF response: {}", json);
-            return new HFResult(-1, "", "");
-        }
-
-        // Map model label to a 0-100 trust score
-        int modelScore = switch (topLabel.toLowerCase().trim()) {
-            case "legitimate company" -> (int) Math.round(50 + topScore * 50); // 50-100
-            case "suspicious profile" -> (int) Math.round(25 + (1.0 - topScore) * 30); // 25-55
-            case "fake company"       -> (int) Math.round(10 + (1.0 - topScore) * 30); // 10-40
-            case "spam registration"  -> (int) Math.round((1.0 - topScore) * 20);       // 0-20
-            default                   -> 50;
-        };
-        modelScore = Math.max(0, Math.min(100, modelScore));
-
-        String labelFormatted = topLabel.substring(0, 1).toUpperCase() + topLabel.substring(1);
-        String pct = String.format(Locale.ROOT, "%.0f%%", topScore * 100);
-
-        String modelFlag;
-        if (!"legitimate company".equalsIgnoreCase(topLabel)) {
-            modelFlag = "🤖 AI model flagged as: " + labelFormatted + " (" + pct + " confidence)";
-        } else {
-            modelFlag = "🤖 AI model verified as: " + labelFormatted + " (" + pct + " confidence)";
-        }
-
-        return new HFResult(modelScore, modelFlag, topLabel);
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
